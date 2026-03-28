@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { DetailPanel } from './components/detail/DetailPanel/DetailPanel';
 import { PageHeader } from './components/header/PageHeader/PageHeader';
 import { AppLayout } from './components/layout/AppLayout/AppLayout';
@@ -11,6 +11,7 @@ import { Toolbar } from './components/toolbar/Toolbar/Toolbar';
 import { useAutoRefresh } from './hooks/useAutoRefresh';
 import { useFilters } from './hooks/useFilters';
 import { useIndicators } from './hooks/useIndicators';
+import { sortIndicators, useSort } from './hooks/useSort';
 import { useStats } from './hooks/useStats';
 import type { Indicator } from './types/indicator';
 import { exportToCsv } from './utils/exportCsv';
@@ -29,6 +30,8 @@ function App() {
   const { stats, loading: statsLoading } = useStats(refreshKey);
   const { filters, setSearch, setSeverity, setType, setSource, setPage, setLimit, reset } = useFilters();
   const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters, refreshKey);
+  const { sort, toggleSort } = useSort();
+  const sortedIndicators = useMemo(() => sortIndicators(indicators, sort), [indicators, sort]);
 
   const hasActiveFilters = Boolean(
     filters.search || filters.severity || filters.type || filters.source,
@@ -120,7 +123,7 @@ function App() {
       <div className={styles.contentRow}>
         <div className={styles.tableArea}>
           <IndicatorTable
-            indicators={indicators}
+            indicators={sortedIndicators}
             loading={indicatorsLoading}
             selectedId={selectedId}
             onSelect={setSelectedId}
@@ -128,6 +131,8 @@ function App() {
             checkedIds={checkedIds}
             onToggleCheck={handleToggleCheck}
             onToggleAll={handleToggleAll}
+            sort={sort}
+            onSort={toggleSort}
           />
           <Pagination
             page={filters.page ?? 1}

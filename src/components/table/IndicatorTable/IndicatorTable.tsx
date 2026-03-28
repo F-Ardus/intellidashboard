@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
+import type { SortField, SortState } from '../../../hooks/useSort';
 import type { Indicator } from '../../../types/indicator';
 import { EmptyState } from '../EmptyState/EmptyState';
-import styles from './IndicatorTable.module.scss';
 import { IndicatorRow } from '../IndicatorRow/IndicatorRow';
 import { SkeletonRow } from '../SkeletonRow/SkeletonRow';
+import styles from './IndicatorTable.module.scss';
 
 const SKELETON_COUNT = 5;
 
@@ -16,6 +17,35 @@ interface IndicatorTableProps {
   checkedIds: Set<string>;
   onToggleCheck: (id: string, indicator: Indicator) => void;
   onToggleAll: () => void;
+  sort: SortState;
+  onSort: (field: SortField) => void;
+}
+
+interface SortableThProps {
+  field: SortField;
+  sort: SortState;
+  onSort: (field: SortField) => void;
+  children: React.ReactNode;
+}
+
+function SortableTh({ field, sort, onSort, children }: SortableThProps) {
+  const active = sort.field === field;
+  const dir = active ? sort.dir : null;
+
+  return (
+    <th className={`${styles.th} ${styles.thSortable}`}>
+      <button
+        className={`${styles.sortBtn} ${active ? styles.sortActive : ''}`}
+        onClick={() => onSort(field)}
+        aria-sort={dir === 'asc' ? 'ascending' : dir === 'desc' ? 'descending' : 'none'}
+      >
+        {children}
+        <span className={`${styles.caret} ${active ? styles.caretActive : ''}`}>
+          {active ? (dir === 'asc' ? '↑' : '↓') : '↕'}
+        </span>
+      </button>
+    </th>
+  );
 }
 
 export function IndicatorTable({
@@ -27,6 +57,8 @@ export function IndicatorTable({
   checkedIds,
   onToggleCheck,
   onToggleAll,
+  sort,
+  onSort,
 }: IndicatorTableProps) {
   const allChecked = indicators.length > 0 && indicators.every((i) => checkedIds.has(i.id));
   const someChecked = !allChecked && indicators.some((i) => checkedIds.has(i.id));
@@ -52,12 +84,12 @@ export function IndicatorTable({
                 aria-label="Select all"
               />
             </th>
-            <th className={styles.th}>Indicator</th>
-            <th className={styles.th}>Type</th>
-            <th className={styles.th}>Severity</th>
-            <th className={styles.th}>Source</th>
-            <th className={styles.th}>Confidence</th>
-            <th className={styles.th}>Last Seen</th>
+            <SortableTh field="value" sort={sort} onSort={onSort}>Indicator</SortableTh>
+            <SortableTh field="type" sort={sort} onSort={onSort}>Type</SortableTh>
+            <SortableTh field="severity" sort={sort} onSort={onSort}>Severity</SortableTh>
+            <SortableTh field="source" sort={sort} onSort={onSort}>Source</SortableTh>
+            <SortableTh field="confidence" sort={sort} onSort={onSort}>Confidence</SortableTh>
+            <SortableTh field="lastSeen" sort={sort} onSort={onSort}>Last Seen</SortableTh>
             <th className={styles.th}>Tags</th>
           </tr>
         </thead>

@@ -30,3 +30,44 @@
   width: 40px;
   padding-right: 0;
 }
+
+.thSortable {
+  padding: 0;
+}
+
+.sortBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.sortActive {
+  color: var(--text-primary);
+}
+
+.caret {
+  font-size: 9px;
+  opacity: 0.3;
+  line-height: 1;
+  transition: opacity 0.15s ease;
+}
+
+.caretActive {
+  opacity: 1;
+}
