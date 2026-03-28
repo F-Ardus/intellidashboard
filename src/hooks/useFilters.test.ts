@@ -6,7 +6,7 @@ describe('useFilters', () => {
   it('initialises with default values', () => {
     const { result } = renderHook(() => useFilters());
     expect(result.current.filters.page).toBe(1);
-    expect(result.current.filters.limit).toBe(20);
+    expect(result.current.filters.limit).toBe(10);
     expect(result.current.filters.search).toBe('');
   });
 
