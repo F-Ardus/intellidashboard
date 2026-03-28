@@ -1,0 +1,12 @@
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background: var(--bg-surface);
+}
