@@ -1,0 +1,63 @@
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
+
+  // Severity color overrides — applied when variant class is on the same element as .card
+  &.critical .value { color: var(--severity-critical); }
+  &.high .value     { color: var(--severity-high); }
+  &.medium .value   { color: var(--severity-medium); }
+  &.low .value      { color: var(--severity-low); }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-tertiary);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.sub {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.skeleton {
+  height: 28px;
+  width: 80px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--bg-elevated) 25%, var(--bg-card-hover) 50%, var(--bg-elevated) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
