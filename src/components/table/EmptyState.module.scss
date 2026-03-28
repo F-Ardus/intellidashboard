@@ -1,0 +1,31 @@
+.cell {
+  padding: 0;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-16) var(--sp-8);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--sp-4);
+  opacity: 0.3;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-2);
+}
+
+.hint {
+  font-size: 13px;
+}
