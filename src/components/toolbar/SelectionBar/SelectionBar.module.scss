@@ -9,6 +9,13 @@
   gap: var(--sp-4);
 }
 
+@media (max-width: 768px) {
+  .bar {
+    padding: var(--sp-2) var(--sp-4);
+    flex-wrap: wrap;
+  }
+}
+
 .left {
   display: flex;
   align-items: center;

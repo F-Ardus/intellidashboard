@@ -8,6 +8,20 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 768px) {
+  .toolbar {
+    padding: var(--sp-3) var(--sp-4);
+  }
+
+  .group {
+    flex-wrap: wrap;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
 .group {
   display: flex;
   align-items: center;

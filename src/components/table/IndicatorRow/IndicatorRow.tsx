@@ -58,9 +58,12 @@ export function IndicatorRow({
       </td>
       <td className={styles.cell}>
         <div className={styles.tags}>
-          {indicator.tags.map((tag) => (
+          {indicator.tags.slice(0, 1).map((tag) => (
             <TagPill key={tag} tag={tag} />
           ))}
+          {indicator.tags.length > 1 && (
+            <span className={styles.tagsMore}>+{indicator.tags.length - 1}</span>
+          )}
         </div>
       </td>
     </tr>

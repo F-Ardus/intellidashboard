@@ -4,3 +4,17 @@
   gap: var(--sp-3);
   padding: var(--sp-5) var(--sp-8);
 }
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: repeat(3, 1fr);
+    padding: var(--sp-4) var(--sp-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .row {
+    grid-template-columns: repeat(2, 1fr);
+    padding: var(--sp-3) var(--sp-4);
+  }
+}

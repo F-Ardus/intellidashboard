@@ -26,14 +26,15 @@ interface SortableThProps {
   sort: SortState;
   onSort: (field: SortField) => void;
   children: React.ReactNode;
+  className?: string;
 }
 
-function SortableTh({ field, sort, onSort, children }: SortableThProps) {
+function SortableTh({ field, sort, onSort, children, className }: SortableThProps) {
   const active = sort.field === field;
   const dir = active ? sort.dir : null;
 
   return (
-    <th className={`${styles.th} ${styles.thSortable}`}>
+    <th className={`${styles.th} ${styles.thSortable}${className ? ` ${className}` : ''}`}>
       <button
         className={`${styles.sortBtn} ${active ? styles.sortActive : ''}`}
         onClick={() => onSort(field)}
@@ -84,7 +85,7 @@ export function IndicatorTable({
                 aria-label="Select all"
               />
             </th>
-            <SortableTh field="value" sort={sort} onSort={onSort}>Indicator</SortableTh>
+            <SortableTh field="value" sort={sort} onSort={onSort} className={styles.thIndicator}>Indicator</SortableTh>
             <SortableTh field="type" sort={sort} onSort={onSort}>Type</SortableTh>
             <SortableTh field="severity" sort={sort} onSort={onSort}>Severity</SortableTh>
             <SortableTh field="source" sort={sort} onSort={onSort}>Source</SortableTh>

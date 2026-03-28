@@ -77,6 +77,13 @@
   gap: var(--sp-6);
 }
 
+@media (max-width: 600px) {
+  .body {
+    grid-template-columns: 1fr;
+    padding: var(--sp-4);
+  }
+}
+
 .section {
   h4 {
     font-size: 10px;
