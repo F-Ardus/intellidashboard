@@ -8,6 +8,7 @@ import { StatsRow } from './components/stats/StatsRow/StatsRow';
 import { IndicatorTable } from './components/table/IndicatorTable/IndicatorTable';
 import { SelectionBar } from './components/toolbar/SelectionBar/SelectionBar';
 import { Toolbar } from './components/toolbar/Toolbar/Toolbar';
+import { useAutoRefresh } from './hooks/useAutoRefresh';
 import { useFilters } from './hooks/useFilters';
 import { useIndicators } from './hooks/useIndicators';
 import { useStats } from './hooks/useStats';
@@ -20,10 +21,14 @@ function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [checkedIndicators, setCheckedIndicators] = useState<Map<string, Indicator>>(new Map());
   const [allPagesSelected, setAllPagesSelected] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const { stats, loading: statsLoading } = useStats();
+  const handleRefresh = useCallback(() => setRefreshKey((k) => k + 1), []);
+  const { secondsLeft } = useAutoRefresh(handleRefresh);
+
+  const { stats, loading: statsLoading } = useStats(refreshKey);
   const { filters, setSearch, setSeverity, setType, setSource, setPage, setLimit, reset } = useFilters();
-  const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters);
+  const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters, refreshKey);
 
   const hasActiveFilters = Boolean(
     filters.search || filters.severity || filters.type || filters.source,
@@ -87,7 +92,7 @@ function App() {
 
   return (
     <AppLayout sidebar={<Sidebar />}>
-      <PageHeader onExport={handleExport} />
+      <PageHeader onExport={handleExport} secondsLeft={secondsLeft} />
       <StatsRow stats={stats} loading={statsLoading} />
       <Toolbar
         search={filters.search ?? ''}

@@ -8,7 +8,7 @@ interface UseStatsResult {
   error: string | null;
 }
 
-export function useStats(): UseStatsResult {
+export function useStats(refreshKey = 0): UseStatsResult {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export function useStats(): UseStatsResult {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [refreshKey]);
 
   return { stats, loading, error };
 }

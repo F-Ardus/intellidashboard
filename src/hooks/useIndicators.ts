@@ -12,7 +12,7 @@ interface UseIndicatorsResult {
 	error: string | null;
 }
 
-export function useIndicators(filters: UIFilters): UseIndicatorsResult {
+export function useIndicators(filters: UIFilters, refreshKey = 0): UseIndicatorsResult {
 	const [data, setData] = useState<Indicator[]>([]);
 	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
@@ -57,7 +57,7 @@ export function useIndicators(filters: UIFilters): UseIndicatorsResult {
 			});
 
 		return () => controller.abort();
-	}, [search, severity, type, source, filtersPage, limit]);
+	}, [search, severity, type, source, filtersPage, limit, refreshKey]);
 
 	return { data, total, page, totalPages, loading, error };
 }

@@ -6,6 +6,13 @@
   color: var(--text-tertiary);
 }
 
+.countdown {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  min-width: 22px;
+}
+
 .dot {
   width: 6px;
   height: 6px;

@@ -5,9 +5,10 @@ import styles from './PageHeader.module.scss';
 interface PageHeaderProps {
   onExport?: () => void;
   onAddIndicator?: () => void;
+  secondsLeft?: number;
 }
 
-export function PageHeader({ onExport, onAddIndicator }: PageHeaderProps) {
+export function PageHeader({ onExport, onAddIndicator, secondsLeft = 30 }: PageHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.left}>
@@ -16,7 +17,7 @@ export function PageHeader({ onExport, onAddIndicator }: PageHeaderProps) {
       </div>
       <div className={styles.actions}>
         <span className={styles.liveFeed}>
-          <LiveFeedBadge />
+          <LiveFeedBadge secondsLeft={secondsLeft} />
         </span>
         <Button variant="secondary" size="sm" onClick={onExport}>
           ⬇ Export
