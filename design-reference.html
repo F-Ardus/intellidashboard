@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Augur Security — Threat Intelligence Dashboard — Design Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS — Augur Security Design System
+   ============================================================ */
+:root {
+  /* Background layers */
+  --bg-root: #0a0c10;
+  --bg-surface: #0f1117;
+  --bg-elevated: #161a23;
+  --bg-card: #1a1e28;
+  --bg-card-hover: #1e2230;
+  --bg-modal: #141820;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.7);
+  --bg-sidebar: #0d0f14;
+  --bg-sidebar-active: rgba(99, 131, 255, 0.12);
+  --bg-input: #12151c;
+
+  /* Border colors */
+  --border-subtle: #1e2230;
+  --border-default: #262b38;
+  --border-hover: #353b4d;
+  --border-active: #4a5270;
+  --border-focus: #6383ff;
+
+  /* Text hierarchy */
+  --text-primary: #e8eaf0;
+  --text-secondary: #8b90a0;
+  --text-tertiary: #5c6170;
+  --text-muted: #3e4352;
+  --text-inverse: #0a0c10;
+
+  /* Augur brand */
+  --augur-blue: #6383ff;
+  --augur-blue-dim: rgba(99, 131, 255, 0.15);
+  --augur-logo: #ffffff;
+
+  /* Severity system */
+  --severity-critical: #ff4757;
+  --severity-critical-bg: rgba(255, 71, 87, 0.12);
+  --severity-critical-border: rgba(255, 71, 87, 0.3);
+  --severity-high: #ff8c42;
+  --severity-high-bg: rgba(255, 140, 66, 0.12);
+  --severity-high-border: rgba(255, 140, 66, 0.3);
+  --severity-medium: #ffc542;
+  --severity-medium-bg: rgba(255, 197, 66, 0.12);
+  --severity-medium-border: rgba(255, 197, 66, 0.3);
+  --severity-low: #48c774;
+  --severity-low-bg: rgba(72, 199, 116, 0.12);
+  --severity-low-border: rgba(72, 199, 116, 0.3);
+
+  /* Status / accent */
+  --status-active: #48c774;
+  --status-warning: #ffc542;
+  --status-error: #ff4757;
+  --status-info: #6383ff;
+  --accent-orange: #e87a35;
+  --accent-teal: #3dd9c4;
+
+  /* Tag colors */
+  --tag-red: rgba(255, 71, 87, 0.15);
+  --tag-red-text: #ff6b7a;
+  --tag-red-border: rgba(255, 71, 87, 0.3);
+  --tag-blue: rgba(99, 131, 255, 0.15);
+  --tag-blue-text: #8ba3ff;
+  --tag-blue-border: rgba(99, 131, 255, 0.3);
+  --tag-purple: rgba(168, 130, 255, 0.15);
+  --tag-purple-text: #b89eff;
+  --tag-purple-border: rgba(168, 130, 255, 0.3);
+  --tag-teal: rgba(61, 217, 196, 0.15);
+  --tag-teal-text: #5ee8d2;
+  --tag-teal-border: rgba(61, 217, 196, 0.3);
+  --tag-gray: rgba(139, 144, 160, 0.12);
+  --tag-gray-text: #8b90a0;
+  --tag-gray-border: rgba(139, 144, 160, 0.2);
+
+  /* Typography */
+  --font-sans: 'DM Sans', 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-display: 'DM Sans', sans-serif;
+
+  /* Spacing scale */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-subtle);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
+  --shadow-modal: 0 12px 48px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-default);
+
+  /* Layout */
+  --sidebar-width: 220px;
+  --header-height: 56px;
+  --detail-width: 400px;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-root);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+.app-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  padding: var(--sp-5) 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 0 var(--sp-5) var(--sp-6);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.sidebar-logo svg { width: 28px; height: 28px; }
+
+.sidebar-logo span {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--augur-logo);
+}
+
+.sidebar-nav { flex: 1; }
+
+.nav-section {
+  margin-bottom: var(--sp-2);
+}
+
+.nav-section-label {
+  padding: var(--sp-3) var(--sp-5) var(--sp-2);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-tertiary);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-5);
+  margin: 1px var(--sp-2);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.nav-item.active {
+  background: var(--bg-sidebar-active);
+  color: var(--augur-blue);
+}
+
+.nav-item .nav-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.nav-item.active .nav-icon { opacity: 1; }
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--severity-critical);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  min-width: 18px;
+  text-align: center;
+}
+
+/* MAIN CONTENT */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* PAGE HEADER */
+.page-header {
+  padding: var(--sp-6) var(--sp-8);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.page-header-left h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.page-header-left p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+/* TOOLBAR */
+.toolbar {
+  padding: var(--sp-4) var(--sp-8);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-default);
+  margin: 0 var(--sp-2);
+}
+
+/* ============================================================
+   COMMON COMPONENTS
+   ============================================================ */
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--augur-blue);
+  color: white;
+  border-color: var(--augur-blue);
+}
+.btn-primary:hover { filter: brightness(1.1); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+.btn-secondary:hover {
+  background: var(--bg-card);
+  border-color: var(--border-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  padding: 6px 10px;
+}
+.btn-ghost:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background: var(--severity-critical-bg);
+  color: var(--severity-critical);
+  border-color: var(--severity-critical-border);
+}
+
+.btn-sm { padding: 4px 10px; font-size: 11.5px; }
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+
+/* INPUTS */
+.input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  padding: 7px 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.input:focus {
+  border-color: var(--augur-blue);
+  box-shadow: 0 0 0 2px var(--augur-blue-dim);
+}
+
+.input::placeholder { color: var(--text-tertiary); }
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon .input { padding-left: 34px; }
+
+.input-with-icon .input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  width: 16px;
+  height: 16px;
+}
+
+.select {
+  appearance: none;
+  background: var(--bg-input) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235c6170' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  padding: 7px 32px 7px 12px;
+  cursor: pointer;
+  outline: none;
+}
+
+.select:focus {
+  border-color: var(--augur-blue);
+  box-shadow: 0 0 0 2px var(--augur-blue-dim);
+}
+
+/* BADGES & TAGS */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+  border: 1px solid transparent;
+}
+
+.badge-critical {
+  background: var(--severity-critical-bg);
+  color: var(--severity-critical);
+  border-color: var(--severity-critical-border);
+}
+
+.badge-high {
+  background: var(--severity-high-bg);
+  color: var(--severity-high);
+  border-color: var(--severity-high-border);
+}
+
+.badge-medium {
+  background: var(--severity-medium-bg);
+  color: var(--severity-medium);
+  border-color: var(--severity-medium-border);
+}
+
+.badge-low {
+  background: var(--severity-low-bg);
+  color: var(--severity-low);
+  border-color: var(--severity-low-border);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.tag-red { background: var(--tag-red); color: var(--tag-red-text); border-color: var(--tag-red-border); }
+.tag-blue { background: var(--tag-blue); color: var(--tag-blue-text); border-color: var(--tag-blue-border); }
+.tag-purple { background: var(--tag-purple); color: var(--tag-purple-text); border-color: var(--tag-purple-border); }
+.tag-teal { background: var(--tag-teal); color: var(--tag-teal-text); border-color: var(--tag-teal-border); }
+.tag-gray { background: var(--tag-gray); color: var(--tag-gray-text); border-color: var(--tag-gray-border); }
+
+/* STAT CARDS (top row) */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--sp-3);
+  padding: var(--sp-5) var(--sp-8);
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  transition: border-color 0.2s ease;
+}
+
+.stat-card:hover { border-color: var(--border-hover); }
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-card-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-tertiary);
+}
+
+.stat-card-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-tertiary);
+}
+
+.stat-card-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.stat-card-sub {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.stat-card.critical .stat-card-value { color: var(--severity-critical); }
+.stat-card.high .stat-card-value { color: var(--severity-high); }
+.stat-card.medium .stat-card-value { color: var(--severity-medium); }
+.stat-card.low .stat-card-value { color: var(--severity-low); }
+.stat-card.total .stat-card-value { color: var(--text-primary); }
+
+/* TABLE */
+.data-table-wrapper {
+  padding: 0 var(--sp-8) var(--sp-6);
+  flex: 1;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.data-table thead {
+  background: var(--bg-elevated);
+}
+
+.data-table th {
+  padding: var(--sp-3) var(--sp-4);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-tertiary);
+  text-align: left;
+  border-bottom: 1px solid var(--border-default);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.data-table th:hover { color: var(--text-secondary); }
+
+.data-table th .sort-icon {
+  display: inline-block;
+  margin-left: 4px;
+  opacity: 0.4;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.1s ease;
+  cursor: pointer;
+}
+
+.data-table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.data-table tbody tr.selected {
+  background: var(--augur-blue-dim);
+}
+
+.data-table td {
+  padding: var(--sp-3) var(--sp-4);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.td-indicator {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--augur-blue);
+}
+
+.td-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.td-source {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.td-time {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.td-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.td-confidence {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.confidence-bar {
+  width: 60px;
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.confidence-value {
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  min-width: 28px;
+}
+
+/* DETAIL PANEL (slide-in) */
+.detail-panel {
+  width: var(--detail-width);
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border-subtle);
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 20;
+  box-shadow: var(--shadow-elevated);
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-header {
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface);
+  z-index: 1;
+}
+
+.detail-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.detail-body { padding: var(--sp-5); flex: 1; }
+
+.detail-section {
+  margin-bottom: var(--sp-6);
+}
+
+.detail-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-2);
+}
+
+.detail-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--augur-blue);
+  word-break: break-all;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-row-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.detail-row-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: var(--bg-modal);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  max-width: 960px;
+  width: 90vw;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: var(--sp-5) var(--sp-6);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.modal-body {
+  padding: var(--sp-6);
+  overflow-y: auto;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-6);
+}
+
+.modal-section h4 {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-3);
+}
+
+/* DONUT CHART placeholder */
+.donut-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+}
+
+.donut-chart {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.donut-chart svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donut-chart .donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: none;
+}
+
+.donut-center-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.donut-center-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* KPI TABLE (modal right panel) */
+.kpi-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kpi-table th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-tertiary);
+  text-align: left;
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.kpi-table td {
+  padding: var(--sp-2) var(--sp-3);
+  font-size: 12.5px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* PAGINATION */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-8) var(--sp-5);
+}
+
+.pagination-info {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.pagination-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pagination-btn:hover {
+  background: var(--bg-card);
+  border-color: var(--border-hover);
+}
+
+.pagination-btn.active {
+  background: var(--augur-blue);
+  border-color: var(--augur-blue);
+  color: white;
+}
+
+/* LOADING */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-elevated) 25%, var(--bg-card) 50%, var(--bg-elevated) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* EMPTY STATE */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-16) var(--sp-8);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--sp-4);
+  opacity: 0.3;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+/* ============================================================
+   ASSEMBLED DASHBOARD PREVIEW
+   ============================================================ */
+.content-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
+
+/* ============================================================
+   DESIGN SPEC SECTION (below mockup)
+   ============================================================ */
+.spec-section {
+  background: var(--bg-surface);
+  border-top: 2px solid var(--augur-blue);
+  padding: var(--sp-10) var(--sp-8);
+  margin-top: var(--sp-10);
+}
+
+.spec-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: var(--sp-6);
+  color: var(--augur-blue);
+  letter-spacing: -0.3px;
+}
+
+.spec-section h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: var(--sp-6) 0 var(--sp-3);
+  color: var(--text-primary);
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-8);
+}
+
+.spec-swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.spec-swatch-color {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+
+.spec-swatch-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-swatch-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.spec-swatch-hex {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+}
+
+.spec-font-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-6);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.spec-font-sample {
+  font-size: 18px;
+  min-width: 200px;
+}
+
+.spec-font-detail {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.spec-component-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  align-items: flex-start;
+  margin: var(--sp-4) 0;
+}
+
+/* Status dot */
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.live { background: var(--status-active); box-shadow: 0 0 6px var(--status-active); }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     MOCKUP — Full Dashboard Layout
+     ============================================================ -->
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 28 28" fill="none"><path d="M14 2L2 26h24L14 2z" stroke="#fff" stroke-width="2" fill="none"/><path d="M14 10l-5 10h10l-5-10z" fill="#6383ff" opacity="0.3"/></svg>
+      <span>Augur</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <a class="nav-item active" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+          <span class="nav-badge">3</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          Augur Events
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Investigate
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Intelligence</div>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Threat Indicators
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/></svg>
+          Campaigns
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          Actors
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Reports</div>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Executive Reports
+        </a>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Analytics
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Settings</div>
+        <a class="nav-item" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          Integrations
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Threat Intelligence Dashboard</h1>
+        <p>Real-time threat indicators and campaign intelligence</p>
+      </div>
+      <div class="page-header-actions">
+        <span style="font-size:11px; color:var(--text-tertiary); margin-right:8px;">
+          <span class="status-dot live"></span> &nbsp;Live feed
+        </span>
+        <button class="btn btn-secondary btn-sm">⬇ Export</button>
+        <button class="btn btn-primary btn-sm">+ Add Indicator</button>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card total">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Total Indicators</span>
+          <svg class="stat-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="stat-card-value">2,847</div>
+        <div class="stat-card-sub">↑ 12% from last week</div>
+      </div>
+      <div class="stat-card critical">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Critical</span>
+        </div>
+        <div class="stat-card-value">342</div>
+        <div class="stat-card-sub">Requires immediate action</div>
+      </div>
+      <div class="stat-card high">
+        <div class="stat-card-header">
+          <span class="stat-card-label">High</span>
+        </div>
+        <div class="stat-card-value">798</div>
+        <div class="stat-card-sub">Active monitoring</div>
+      </div>
+      <div class="stat-card medium">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Medium</span>
+        </div>
+        <div class="stat-card-value">1,139</div>
+        <div class="stat-card-sub">Under review</div>
+      </div>
+      <div class="stat-card low">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Low</span>
+        </div>
+        <div class="stat-card-value">568</div>
+        <div class="stat-card-sub">Informational</div>
+      </div>
+    </div>
+
+    <!-- Toolbar / Filters -->
+    <div class="toolbar">
+      <div class="input-with-icon" style="width:260px;">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="input" type="text" placeholder="Search indicators...">
+      </div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group">
+        <select class="select">
+          <option>All Severities</option>
+          <option>Critical</option>
+          <option>High</option>
+          <option>Medium</option>
+          <option>Low</option>
+        </select>
+        <select class="select">
+          <option>All Types</option>
+          <option>IP Address</option>
+          <option>Domain</option>
+          <option>File Hash</option>
+          <option>URL</option>
+        </select>
+        <select class="select">
+          <option>All Sources</option>
+          <option>AbuseIPDB</option>
+          <option>VirusTotal</option>
+          <option>OTX AlienVault</option>
+          <option>Emerging Threats</option>
+          <option>Silent Push</option>
+        </select>
+      </div>
+      <div style="margin-left:auto;">
+        <button class="btn btn-ghost btn-sm">Clear filters</button>
+      </div>
+    </div>
+
+    <!-- Data Table + Detail Panel -->
+    <div style="display:flex; flex:1;">
+      <div class="content-area">
+        <div class="data-table-wrapper" style="padding-top:var(--sp-4);">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:28px;"><input type="checkbox" style="accent-color:var(--augur-blue);"></th>
+                <th>Indicator <span class="sort-icon">↕</span></th>
+                <th>Type</th>
+                <th>Severity</th>
+                <th>Confidence</th>
+                <th>Source</th>
+                <th>Tags</th>
+                <th>Last Seen <span class="sort-icon">↓</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="selected">
+                <td><input type="checkbox" checked style="accent-color:var(--augur-blue);"></td>
+                <td class="td-indicator">185.220.101.34</td>
+                <td><span class="td-type">⬡ IP</span></td>
+                <td><span class="badge badge-critical">Critical</span></td>
+                <td>
+                  <div class="td-confidence">
+                    <div class="confidence-bar"><div class="confidence-bar-fill" style="width:94%; background:var(--severity-critical);"></div></div>
+                    <span class="confidence-value" style="color:var(--severity-critical);">94</span>
+                  </div>
+                </td>
+                <td class="td-source">AbuseIPDB</td>
+                <td class="td-tags"><span class="tag tag-red">tor-exit</span><span class="tag tag-red">botnet</span></td>
+                <td class="td-time">2 min ago</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--augur-blue);"></td>
+                <td class="td-indicator">malware-c2.storm-412.ru</td>
+                <td><span class="td-type">◎ Domain</span></td>
+                <td><span class="badge badge-critical">Critical</span></td>
+                <td>
+                  <div class="td-confidence">
+                    <div class="confidence-bar"><div class="confidence-bar-fill" style="width:91%; background:var(--severity-critical);"></div></div>
+                    <span class="confidence-value" style="color:var(--severity-critical);">91</span>
+                  </div>
+                </td>
+                <td class="td-source">VirusTotal</td>
+                <td class="td-tags"><span class="tag tag-purple">c2</span><span class="tag tag-red">malware</span></td>
+                <td class="td-time">8 min ago</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--augur-blue);"></td>
+                <td class="td-indicator">45.134.26.38</td>
+                <td><span class="td-type">⬡ IP</span></td>
+                <td><span class="badge badge-high">High</span></td>
+                <td>
+                  <div class="td-confidence">
+                    <div class="confidence-bar"><div class="confidence-bar-fill" style="width:78%; background:var(--severity-high);"></div></div>
+                    <span class="confidence-value" style="color:var(--severity-high);">78</span>
+                  </div>
+                </td>
+                <td class="td-source">Silent Push</td>
+                <td class="td-tags"><span class="tag tag-blue">scanner</span><span class="tag tag-teal">brute-force</span></td>
+                <td class="td-time">23 min ago</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--augur-blue);"></td>
+                <td class="td-indicator" style="font-size:11px;">a3f8b2c1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1</td>
+                <td><span class="td-type"># Hash</span></td>
+                <td><span class="badge badge-high">High</span></td>
+                <td>
+                  <div class="td-confidence">
+                    <div class="confidence-bar"><div class="confidence-bar-fill" style="width:72%; background:var(--severity-high);"></div></div>
+                    <span class="confidence-value" style="color:var(--severity-high);">72</span>
+                  </div>
+                </td>
+                <td class="td-source">MalwareBazaar</td>
+                <td class="td-tags"><span class="tag tag-red">ransomware</span><span class="tag tag-purple">dropper</span></td>
+                <td class="td-time">1h ago</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--augur-blue);"></td>
+                <td class="td-indicator">https://phish-login.ghost-223.xyz/login?id=48271</td>
+                <td><span class="td-type">🔗 URL</span></td>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td>
+                  <div class="td-confidence">
+                    <div class="confidence-bar"><div class="confidence-bar-fill" style="width:55%; background:var(--severity-medium);"></div></div>
+                    <span class="confidence-value" style="color:var(--severity-medium);">55</span>
+                  </div>
+                </td>
+                <td class="td-source">PhishTank</td>
+                <td class="td-tags"><span class="tag tag-teal">phishing</span><span class="tag tag-blue">credential</span></td>
+                <td class="td-time">2h ago</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--augur-blue);"></td>
+                <td class="td-indicator">91.212.166.65</td>
+                <td><span class="td-type">⬡ IP</span></td>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td>
+                  <div class="td-confidence">
+                    <div class="confidence-bar"><div class="confidence-bar-fill" style="width:48%; background:var(--severity-medium);"></div></div>
+                    <span class="confidence-value" style="color:var(--severity-medium);">48</span>
+                  </div>
+                </td>
+                <td class="td-source">GreyNoise</td>
+                <td class="td-tags"><span class="tag tag-gray">proxy</span></td>
+                <td class="td-time">4h ago</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" style="accent-color:var(--augur-blue);"></td>
+                <td class="td-indicator">cdn-fake.zero-88.tk</td>
+                <td><span class="td-type">◎ Domain</span></td>
+                <td><span class="badge badge-low">Low</span></td>
+                <td>
+                  <div class="td-confidence">
+                    <div class="confidence-bar"><div class="confidence-bar-fill" style="width:32%; background:var(--severity-low);"></div></div>
+                    <span class="confidence-value" style="color:var(--severity-low);">32</span>
+                  </div>
+                </td>
+                <td class="td-source">URLhaus</td>
+                <td class="td-tags"><span class="tag tag-gray">parking</span><span class="tag tag-gray">sinkhole</span></td>
+                <td class="td-time">6h ago</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <span class="pagination-info">Showing 1-20 of 2,847 indicators</span>
+          <div class="pagination-controls">
+            <button class="pagination-btn">‹</button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">…</button>
+            <button class="pagination-btn">143</button>
+            <button class="pagination-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Panel -->
+      <div class="detail-panel" style="position:relative; flex-shrink:0;">
+        <div class="detail-header">
+          <h3>Indicator Details</h3>
+          <button class="btn btn-ghost btn-sm" style="font-size:16px;">✕</button>
+        </div>
+        <div class="detail-body">
+          <div class="detail-section">
+            <div class="detail-section-label">Value</div>
+            <div class="detail-value">185.220.101.34</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-label">Classification</div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+              <span class="badge badge-critical">Critical</span>
+              <span class="td-type">⬡ IP Address</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-label">Confidence Score</div>
+            <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
+              <div class="confidence-bar" style="width:120px; height:6px;">
+                <div class="confidence-bar-fill" style="width:94%; background:var(--severity-critical);"></div>
+              </div>
+              <span style="font-size:18px; font-weight:700; font-family:var(--font-mono); color:var(--severity-critical);">94%</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-label">Tags</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+              <span class="tag tag-red">tor-exit</span>
+              <span class="tag tag-red">botnet</span>
+              <span class="tag tag-blue">scanner</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-label">Timeline</div>
+            <div class="detail-row">
+              <span class="detail-row-label">First Seen</span>
+              <span class="detail-row-value">2025-11-08 14:22 UTC</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Last Seen</span>
+              <span class="detail-row-value">2 minutes ago</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Augured On</span>
+              <span class="detail-row-value" style="color:var(--augur-blue);">2025-09-15</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-label">Source</div>
+            <div class="detail-row">
+              <span class="detail-row-label">Provider</span>
+              <span class="detail-row-value">AbuseIPDB</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-row-label">Reports</span>
+              <span class="detail-row-value">1,247</span>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-label">Related Campaigns</div>
+            <div style="margin-top:6px;">
+              <a href="#" style="color:var(--augur-blue); text-decoration:none; font-size:12.5px; font-weight:500;">F5 Attack Campaign</a>
+              <span style="font-size:11px; color:var(--text-tertiary); margin-left:6px;">UNC3886 • China</span>
+            </div>
+          </div>
+          <div style="margin-top:var(--sp-6); display:flex; gap:8px;">
+            <button class="btn btn-secondary btn-sm" style="flex:1;">Investigate</button>
+            <button class="btn btn-danger btn-sm" style="flex:1;">Block</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============================================================
+     DESIGN SPECIFICATION
+     ============================================================ -->
+<div class="spec-section">
+  <h2>📐 Design Specification</h2>
+  <p style="color:var(--text-secondary); margin-bottom:var(--sp-8); max-width:640px;">
+    This document is your design reference for the Augur Security Threat Intelligence Dashboard.
+    Use browser DevTools to inspect exact values. All CSS variables are defined in <code style="background:var(--bg-card); padding:2px 6px; border-radius:3px; font-family:var(--font-mono); font-size:12px;">:root</code>.
+  </p>
+
+  <!-- COLOR PALETTE -->
+  <h3>Color Palette</h3>
+  <div class="spec-grid">
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#0a0c10;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Root Background</span><span class="spec-swatch-hex">#0a0c10</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#0f1117;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Surface</span><span class="spec-swatch-hex">#0f1117</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#161a23;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Elevated</span><span class="spec-swatch-hex">#161a23</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#1a1e28;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Card</span><span class="spec-swatch-hex">#1a1e28</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#6383ff;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Augur Blue (Brand)</span><span class="spec-swatch-hex">#6383ff</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#e8eaf0;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Text Primary</span><span class="spec-swatch-hex">#e8eaf0</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#8b90a0;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Text Secondary</span><span class="spec-swatch-hex">#8b90a0</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#5c6170;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Text Tertiary</span><span class="spec-swatch-hex">#5c6170</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#ff4757;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Severity: Critical</span><span class="spec-swatch-hex">#ff4757</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#ff8c42;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Severity: High</span><span class="spec-swatch-hex">#ff8c42</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#ffc542;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Severity: Medium</span><span class="spec-swatch-hex">#ffc542</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#48c774;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Severity: Low</span><span class="spec-swatch-hex">#48c774</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#262b38;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Border Default</span><span class="spec-swatch-hex">#262b38</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#e87a35;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Accent Orange</span><span class="spec-swatch-hex">#e87a35</span></div></div>
+    <div class="spec-swatch"><div class="spec-swatch-color" style="background:#3dd9c4;"></div><div class="spec-swatch-info"><span class="spec-swatch-name">Accent Teal</span><span class="spec-swatch-hex">#3dd9c4</span></div></div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <h3>Typography</h3>
+  <div style="margin-bottom:var(--sp-6);">
+    <div class="spec-font-row">
+      <span class="spec-font-sample" style="font-family:var(--font-sans); font-weight:700;">DM Sans Bold</span>
+      <span class="spec-font-detail">Headings, stat values, buttons — <code>font-family: 'DM Sans'</code></span>
+    </div>
+    <div class="spec-font-row">
+      <span class="spec-font-sample" style="font-family:var(--font-sans); font-weight:500;">DM Sans Medium</span>
+      <span class="spec-font-detail">Body text, nav items, labels — <code>font-weight: 500</code></span>
+    </div>
+    <div class="spec-font-row">
+      <span class="spec-font-sample" style="font-family:var(--font-mono); font-weight:500;">JetBrains Mono</span>
+      <span class="spec-font-detail">IPs, hashes, URLs, confidence values — <code>font-family: 'JetBrains Mono'</code></span>
+    </div>
+  </div>
+
+  <!-- COMPONENTS -->
+  <h3>Component Reference</h3>
+
+  <h4 style="font-size:12px; color:var(--text-secondary); margin:var(--sp-4) 0 var(--sp-2); text-transform:uppercase; letter-spacing:0.8px;">Severity Badges</h4>
+  <div class="spec-component-grid">
+    <span class="badge badge-critical">Critical</span>
+    <span class="badge badge-high">High</span>
+    <span class="badge badge-medium">Medium</span>
+    <span class="badge badge-low">Low</span>
+  </div>
+
+  <h4 style="font-size:12px; color:var(--text-secondary); margin:var(--sp-4) 0 var(--sp-2); text-transform:uppercase; letter-spacing:0.8px;">Tags</h4>
+  <div class="spec-component-grid">
+    <span class="tag tag-red">tor-exit</span>
+    <span class="tag tag-blue">scanner</span>
+    <span class="tag tag-purple">c2</span>
+    <span class="tag tag-teal">phishing</span>
+    <span class="tag tag-gray">sinkhole</span>
+    <span class="tag tag-red">ransomware</span>
+    <span class="tag tag-blue">brute-force</span>
+    <span class="tag tag-purple">dropper</span>
+  </div>
+
+  <h4 style="font-size:12px; color:var(--text-secondary); margin:var(--sp-4) 0 var(--sp-2); text-transform:uppercase; letter-spacing:0.8px;">Buttons</h4>
+  <div class="spec-component-grid">
+    <button class="btn btn-primary">Primary Action</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn btn-danger">Danger</button>
+    <button class="btn btn-primary btn-sm">Small</button>
+  </div>
+
+  <h4 style="font-size:12px; color:var(--text-secondary); margin:var(--sp-4) 0 var(--sp-2); text-transform:uppercase; letter-spacing:0.8px;">Confidence Bars</h4>
+  <div style="display:flex; flex-direction:column; gap:8px; max-width:300px; margin:var(--sp-3) 0;">
+    <div class="td-confidence"><div class="confidence-bar" style="width:100px;"><div class="confidence-bar-fill" style="width:94%; background:var(--severity-critical);"></div></div><span class="confidence-value" style="color:var(--severity-critical);">94</span><span style="font-size:11px; color:var(--text-tertiary); margin-left:4px;">Critical</span></div>
+    <div class="td-confidence"><div class="confidence-bar" style="width:100px;"><div class="confidence-bar-fill" style="width:72%; background:var(--severity-high);"></div></div><span class="confidence-value" style="color:var(--severity-high);">72</span><span style="font-size:11px; color:var(--text-tertiary); margin-left:4px;">High</span></div>
+    <div class="td-confidence"><div class="confidence-bar" style="width:100px;"><div class="confidence-bar-fill" style="width:55%; background:var(--severity-medium);"></div></div><span class="confidence-value" style="color:var(--severity-medium);">55</span><span style="font-size:11px; color:var(--text-tertiary); margin-left:4px;">Medium</span></div>
+    <div class="td-confidence"><div class="confidence-bar" style="width:100px;"><div class="confidence-bar-fill" style="width:32%; background:var(--severity-low);"></div></div><span class="confidence-value" style="color:var(--severity-low);">32</span><span style="font-size:11px; color:var(--text-tertiary); margin-left:4px;">Low</span></div>
+  </div>
+
+  <!-- LAYOUT SPEC -->
+  <h3>Layout Dimensions</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-3); max-width:600px; margin:var(--sp-3) 0;">
+    <div class="spec-swatch" style="padding:var(--sp-3);"><div class="spec-swatch-info"><span class="spec-swatch-name">Sidebar Width</span><span class="spec-swatch-hex">220px</span></div></div>
+    <div class="spec-swatch" style="padding:var(--sp-3);"><div class="spec-swatch-info"><span class="spec-swatch-name">Detail Panel</span><span class="spec-swatch-hex">400px</span></div></div>
+    <div class="spec-swatch" style="padding:var(--sp-3);"><div class="spec-swatch-info"><span class="spec-swatch-name">Header Height</span><span class="spec-swatch-hex">56px</span></div></div>
+    <div class="spec-swatch" style="padding:var(--sp-3);"><div class="spec-swatch-info"><span class="spec-swatch-name">Card Border Radius</span><span class="spec-swatch-hex">8px</span></div></div>
+    <div class="spec-swatch" style="padding:var(--sp-3);"><div class="spec-swatch-info"><span class="spec-swatch-name">Modal Max Width</span><span class="spec-swatch-hex">960px</span></div></div>
+    <div class="spec-swatch" style="padding:var(--sp-3);"><div class="spec-swatch-info"><span class="spec-swatch-name">Table Row Height</span><span class="spec-swatch-hex">~44px</span></div></div>
+  </div>
+
+  <!-- STATES & INTERACTIONS -->
+  <h3>States &amp; Interactions</h3>
+  <div style="color:var(--text-secondary); font-size:13px; max-width:640px; line-height:1.7;">
+    <p><strong style="color:var(--text-primary);">Hover:</strong> Table rows lighten to <code style="background:var(--bg-card); padding:2px 5px; border-radius:3px; font-family:var(--font-mono); font-size:11px;">#1e2230</code>. Cards shift border to <code style="background:var(--bg-card); padding:2px 5px; border-radius:3px; font-family:var(--font-mono); font-size:11px;">#353b4d</code>.</p>
+    <p><strong style="color:var(--text-primary);">Selected Row:</strong> Background <code style="background:var(--bg-card); padding:2px 5px; border-radius:3px; font-family:var(--font-mono); font-size:11px;">rgba(99,131,255,0.15)</code> with detail panel open.</p>
+    <p><strong style="color:var(--text-primary);">Focus:</strong> Inputs get <code style="background:var(--bg-card); padding:2px 5px; border-radius:3px; font-family:var(--font-mono); font-size:11px;">box-shadow: 0 0 0 2px rgba(99,131,255,0.15)</code> and blue border.</p>
+    <p><strong style="color:var(--text-primary);">Loading:</strong> Skeleton shimmer animation on table rows (see <code style="background:var(--bg-card); padding:2px 5px; border-radius:3px; font-family:var(--font-mono); font-size:11px;">.skeleton</code> class).</p>
+    <p><strong style="color:var(--text-primary);">Transitions:</strong> All interactive transitions use <code style="background:var(--bg-card); padding:2px 5px; border-radius:3px; font-family:var(--font-mono); font-size:11px;">0.15s ease</code>.</p>
+  </div>
+</div>
+
+</body>
+</html>
