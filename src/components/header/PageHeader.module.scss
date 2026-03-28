@@ -1,0 +1,36 @@
+.header {
+  padding: var(--sp-6) var(--sp-8);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.left {
+  h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text-primary);
+  }
+
+  p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.liveFeed {
+  margin-right: var(--sp-2);
+}
