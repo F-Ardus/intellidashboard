@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
 import { PageHeader } from './components/header/PageHeader';
 import { Sidebar } from './components/layout/Sidebar';
+import { Pagination } from './components/pagination/Pagination';
 import { StatsRow } from './components/stats/StatsRow';
 import { IndicatorTable } from './components/table/IndicatorTable';
 import { Toolbar } from './components/toolbar/Toolbar';
@@ -13,8 +14,8 @@ function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const { stats, loading: statsLoading } = useStats();
-  const { filters, setSearch, setSeverity, setType, setSource, reset } = useFilters();
-  const { data: indicators, loading: indicatorsLoading } = useIndicators(filters);
+  const { filters, setSearch, setSeverity, setType, setSource, setPage, reset } = useFilters();
+  const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters);
 
   const hasActiveFilters = Boolean(
     filters.search || filters.severity || filters.type || filters.source,
@@ -43,7 +44,14 @@ function App() {
         onSelect={setSelectedId}
         hasFilters={hasActiveFilters}
       />
-      {/* Pagination + detail panel — added in subsequent commits */}
+      <Pagination
+        page={filters.page ?? 1}
+        totalPages={totalPages}
+        total={total}
+        limit={filters.limit ?? 20}
+        onPageChange={setPage}
+      />
+      {/* Detail panel — added in next commit */}
     </AppLayout>
   );
 }
