@@ -10,6 +10,7 @@ import { IndicatorTable } from './components/table/IndicatorTable/IndicatorTable
 import { SelectionBar } from './components/toolbar/SelectionBar/SelectionBar';
 import { Toolbar } from './components/toolbar/Toolbar/Toolbar';
 import { useAutoRefresh } from './hooks/useAutoRefresh';
+import { useAvailableTags } from './hooks/useAvailableTags';
 import { useFilters } from './hooks/useFilters';
 import { useIndicators } from './hooks/useIndicators';
 import { sortIndicators, useSort } from './hooks/useSort';
@@ -30,13 +31,14 @@ function App() {
   const { secondsLeft } = useAutoRefresh(handleRefresh);
 
   const { stats, loading: statsLoading } = useStats(refreshKey);
-  const { filters, setSearch, setSeverity, setType, setSource, setPage, setLimit, reset } = useFilters();
+  const { filters, setSearch, setSeverity, setType, setSource, setTags, setPage, setLimit, reset } = useFilters();
   const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters, refreshKey);
   const { sort, toggleSort } = useSort();
   const sortedIndicators = useMemo(() => sortIndicators(indicators, sort), [indicators, sort]);
+  const availableTags = useAvailableTags(filters);
 
   const hasActiveFilters = Boolean(
-    filters.search || filters.severity || filters.type || filters.source,
+    filters.search || filters.severity || filters.type || filters.source || filters.tags?.length,
   );
 
   const checkedIds = new Set(checkedIndicators.keys());
@@ -82,6 +84,8 @@ function App() {
         search: filters.search,
         severity: filters.severity,
         type: filters.type,
+        source: filters.source,
+        tags: filters.tags,
         page: 1,
         limit: total,
       });
@@ -110,10 +114,13 @@ function App() {
         severity={filters.severity}
         type={filters.type}
         source={filters.source}
+        tags={filters.tags ?? []}
+        availableTags={availableTags}
         onSearchChange={setSearch}
         onSeverityChange={setSeverity}
         onTypeChange={setType}
         onSourceChange={setSource}
+        onTagsChange={setTags}
         onClear={reset}
         hasActiveFilters={hasActiveFilters}
       />

@@ -3,6 +3,7 @@ import type { IndicatorFilters, IndicatorType, Severity } from '../types/indicat
 
 export interface UIFilters extends IndicatorFilters {
   source?: string;
+  tags?: string[];
 }
 
 const DEFAULT_FILTERS: UIFilters = {
@@ -10,6 +11,7 @@ const DEFAULT_FILTERS: UIFilters = {
   severity: undefined,
   type: undefined,
   source: undefined,
+  tags: [],
   page: 1,
   limit: 10,
 };
@@ -22,11 +24,15 @@ function parseFiltersFromUrl(): UIFilters {
   const severity = params.get('severity') as Severity;
   const type = params.get('type') as IndicatorType;
 
+  const rawTags = params.get('tags');
+  const tags = rawTags ? rawTags.split(',').filter(Boolean) : [];
+
   return {
     search: params.get('q') ?? DEFAULT_FILTERS.search,
     severity: VALID_SEVERITIES.includes(severity) ? severity : undefined,
     type: VALID_TYPES.includes(type) ? type : undefined,
     source: params.get('source') ?? undefined,
+    tags,
     page: Number(params.get('page')) || DEFAULT_FILTERS.page,
     limit: Number(params.get('limit')) || DEFAULT_FILTERS.limit,
   };
@@ -38,6 +44,7 @@ function filtersToUrl(filters: UIFilters): string {
   if (filters.severity) params.set('severity', filters.severity);
   if (filters.type) params.set('type', filters.type);
   if (filters.source) params.set('source', filters.source);
+  if (filters.tags && filters.tags.length > 0) params.set('tags', filters.tags.join(','));
   if (filters.page && filters.page !== 1) params.set('page', String(filters.page));
   if (filters.limit && filters.limit !== DEFAULT_FILTERS.limit) params.set('limit', String(filters.limit));
   const qs = params.toString();
@@ -67,6 +74,10 @@ export function useFilters() {
     setFilters((prev) => ({ ...prev, source, page: 1 }));
   }, []);
 
+  const setTags = useCallback((tags: string[]) => {
+    setFilters((prev) => ({ ...prev, tags, page: 1 }));
+  }, []);
+
   const setPage = useCallback((page: number) => {
     setFilters((prev) => ({ ...prev, page }));
   }, []);
@@ -79,5 +90,5 @@ export function useFilters() {
     setFilters(DEFAULT_FILTERS);
   }, []);
 
-  return { filters, setSearch, setSeverity, setType, setSource, setPage, setLimit, reset };
+  return { filters, setSearch, setSeverity, setType, setSource, setTags, setPage, setLimit, reset };
 }

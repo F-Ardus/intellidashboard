@@ -35,6 +35,8 @@ app.get('/api/indicators', (req, res) => {
   const severity = req.query.severity?.toLowerCase();
   const type = req.query.type?.toLowerCase();
   const search = req.query.search?.toLowerCase();
+  const source = req.query.source;
+  const tags = req.query.tags ? req.query.tags.split(',').filter(Boolean) : [];
 
   let filtered = [...indicators];
 
@@ -55,6 +57,14 @@ app.get('/api/indicators', (req, res) => {
     );
   }
 
+  if (source) {
+    filtered = filtered.filter((i) => i.source === source);
+  }
+
+  if (tags.length > 0) {
+    filtered = filtered.filter((i) => tags.every((t) => i.tags.includes(t)));
+  }
+
   const total = filtered.length;
   const totalPages = Math.ceil(total / limit);
   const start = (page - 1) * limit;
@@ -65,6 +75,55 @@ app.get('/api/indicators', (req, res) => {
   setTimeout(() => {
     res.json({ data, total, page, totalPages });
   }, delay);
+});
+
+/**
+ * GET /api/tags
+ *
+ * Returns the list of tags that appear in at least one indicator matching
+ * the current filter params. Already-selected tags are excluded from the
+ * response so the client only shows tags that will produce new results.
+ *
+ * Query parameters: same as /api/indicators (except page/limit)
+ */
+app.get('/api/tags', (req, res) => {
+  const severity = req.query.severity?.toLowerCase();
+  const type = req.query.type?.toLowerCase();
+  const search = req.query.search?.toLowerCase();
+  const source = req.query.source;
+  const tags = req.query.tags ? req.query.tags.split(',').filter(Boolean) : [];
+
+  let filtered = [...indicators];
+
+  if (severity && ['critical', 'high', 'medium', 'low'].includes(severity)) {
+    filtered = filtered.filter((i) => i.severity === severity);
+  }
+  if (type && ['ip', 'domain', 'hash', 'url'].includes(type)) {
+    filtered = filtered.filter((i) => i.type === type);
+  }
+  if (search) {
+    filtered = filtered.filter(
+      (i) =>
+        i.value.toLowerCase().includes(search) ||
+        i.source.toLowerCase().includes(search) ||
+        i.tags.some((t) => t.toLowerCase().includes(search))
+    );
+  }
+  if (source) {
+    filtered = filtered.filter((i) => i.source === source);
+  }
+  if (tags.length > 0) {
+    filtered = filtered.filter((i) => tags.every((t) => i.tags.includes(t)));
+  }
+
+  const available = new Set();
+  for (const indicator of filtered) {
+    for (const tag of indicator.tags) {
+      if (!tags.includes(tag)) available.add(tag);
+    }
+  }
+
+  res.json({ tags: [...available].sort() });
 });
 
 /**

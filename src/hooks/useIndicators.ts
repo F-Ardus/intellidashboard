@@ -20,7 +20,7 @@ export function useIndicators(filters: UIFilters, refreshKey = 0): UseIndicators
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	const { search, severity, type, source, page: filtersPage, limit } = filters;
+	const { search, severity, type, source, tags, page: filtersPage, limit } = filters;
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -29,23 +29,14 @@ export function useIndicators(filters: UIFilters, refreshKey = 0): UseIndicators
 		setError(null);
 
 		fetchIndicators(
-			{ search, severity, type, page: filtersPage, limit },
+			{ search, severity, type, source, tags, page: filtersPage, limit },
 			controller.signal,
 		)
 			.then((response) => {
-				// Source filter is client-side — the server doesn't support it
-				const filtered = source
-					? response.data.filter((i) => i.source === source)
-					: response.data;
-
-				setData(filtered);
-				setTotal(source ? filtered.length : response.total);
+				setData(response.data);
+				setTotal(response.total);
 				setPage(response.page);
-				setTotalPages(
-					source
-						? Math.ceil(filtered.length / (limit ?? 20))
-						: response.totalPages,
-				);
+				setTotalPages(response.totalPages);
 				setLoading(false);
 			})
 			.catch((err: unknown) => {
@@ -57,7 +48,7 @@ export function useIndicators(filters: UIFilters, refreshKey = 0): UseIndicators
 			});
 
 		return () => controller.abort();
-	}, [search, severity, type, source, filtersPage, limit, refreshKey]);
+	}, [search, severity, type, source, tags, filtersPage, limit, refreshKey]);
 
 	return { data, total, page, totalPages, loading, error };
 }

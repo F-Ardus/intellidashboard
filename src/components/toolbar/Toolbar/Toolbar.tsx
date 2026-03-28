@@ -1,5 +1,6 @@
 import type { IndicatorType, Severity } from '../../../types/indicator';
 import { Button } from '../../common/Button/Button';
+import { TagFilter } from '../TagFilter/TagFilter';
 import { FilterSelect } from '../FilterSelect/FilterSelect';
 import { SearchInput } from '../SearchInput/SearchInput';
 import styles from './Toolbar.module.scss';
@@ -29,10 +30,13 @@ interface ToolbarProps {
   severity: Severity | undefined;
   type: IndicatorType | undefined;
   source: string | undefined;
+  tags: string[];
+  availableTags: string[];
   onSearchChange: (v: string) => void;
   onSeverityChange: (v: Severity | undefined) => void;
   onTypeChange: (v: IndicatorType | undefined) => void;
   onSourceChange: (v: string | undefined) => void;
+  onTagsChange: (v: string[]) => void;
   onClear: () => void;
   hasActiveFilters: boolean;
 }
@@ -42,10 +46,13 @@ export function Toolbar({
   severity,
   type,
   source,
+  tags,
+  availableTags,
   onSearchChange,
   onSeverityChange,
   onTypeChange,
   onSourceChange,
+  onTagsChange,
   onClear,
   hasActiveFilters,
 }: ToolbarProps) {
@@ -74,6 +81,7 @@ export function Toolbar({
           options={SOURCE_OPTIONS}
           placeholder="All Sources"
         />
+        <TagFilter selected={tags} availableTags={availableTags} onChange={onTagsChange} />
       </div>
 
       {hasActiveFilters && (
