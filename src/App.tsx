@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { DetailPanel } from './components/detail/DetailPanel/DetailPanel';
 import { PageHeader } from './components/header/PageHeader/PageHeader';
+import { StatsModal } from './components/stats/StatsModal/StatsModal';
 import { AppLayout } from './components/layout/AppLayout/AppLayout';
 import { Sidebar } from './components/layout/Sidebar/Sidebar';
 import { Pagination } from './components/pagination/Pagination/Pagination';
@@ -23,6 +24,7 @@ function App() {
   const [checkedIndicators, setCheckedIndicators] = useState<Map<string, Indicator>>(new Map());
   const [allPagesSelected, setAllPagesSelected] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [statsModalOpen, setStatsModalOpen] = useState(false);
 
   const handleRefresh = useCallback(() => setRefreshKey((k) => k + 1), []);
   const { secondsLeft } = useAutoRefresh(handleRefresh);
@@ -94,9 +96,15 @@ function App() {
   const showSelectionBar = allPagesSelected || checkedIndicators.size > 0;
 
   return (
+    <>
     <AppLayout sidebar={<Sidebar />}>
       <PageHeader onExport={handleExport} secondsLeft={secondsLeft} />
-      <StatsRow stats={stats} loading={statsLoading} />
+      <StatsRow
+        stats={stats}
+        loading={statsLoading}
+        onViewStats={() => setStatsModalOpen(true)}
+        onFilterBySeverity={setSeverity}
+      />
       <Toolbar
         search={filters.search ?? ''}
         severity={filters.severity}
@@ -148,6 +156,10 @@ function App() {
         )}
       </div>
     </AppLayout>
+    {statsModalOpen && stats !== null && (
+      <StatsModal stats={stats} onClose={() => setStatsModalOpen(false)} />
+    )}
+    </>
   );
 }
 

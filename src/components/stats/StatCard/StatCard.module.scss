@@ -12,6 +12,15 @@
     border-color: var(--border-hover);
   }
 
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--border-active);
+      background: var(--bg-card-hover);
+    }
+  }
+
   // Severity color overrides — applied when variant class is on the same element as .card
   &.critical .value { color: var(--severity-critical); }
   &.high .value     { color: var(--severity-high); }

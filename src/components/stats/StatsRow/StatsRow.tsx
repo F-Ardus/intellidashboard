@@ -1,3 +1,4 @@
+import type { Severity } from '../../../types/indicator';
 import type { Stats } from '../../../types/stats';
 import { StatCard } from '../StatCard/StatCard';
 import styles from './StatsRow.module.scss';
@@ -5,6 +6,8 @@ import styles from './StatsRow.module.scss';
 interface StatsRowProps {
   stats: Stats | null;
   loading: boolean;
+  onViewStats?: () => void;
+  onFilterBySeverity?: (severity: Severity) => void;
 }
 
 function ShieldIcon() {
@@ -15,9 +18,11 @@ function ShieldIcon() {
   );
 }
 
-export function StatsRow({ stats, loading }: StatsRowProps) {
+export function StatsRow({ stats, loading, onViewStats, onFilterBySeverity }: StatsRowProps) {
   const val = (n: number | undefined) =>
     loading || stats === null ? null : (n ?? 0);
+
+  const ready = stats !== null && !loading;
 
   return (
     <div className={styles.row}>
@@ -27,30 +32,35 @@ export function StatsRow({ stats, loading }: StatsRowProps) {
         variant="total"
         subLabel="↑ 12% from last week"
         icon={<ShieldIcon />}
+        onClick={ready && onViewStats ? onViewStats : undefined}
       />
       <StatCard
         label="Critical"
         value={val(stats?.critical)}
         variant="critical"
         subLabel="Requires immediate action"
+        onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('critical') : undefined}
       />
       <StatCard
         label="High"
         value={val(stats?.high)}
         variant="high"
         subLabel="Active monitoring"
+        onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('high') : undefined}
       />
       <StatCard
         label="Medium"
         value={val(stats?.medium)}
         variant="medium"
         subLabel="Under review"
+        onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('medium') : undefined}
       />
       <StatCard
         label="Low"
         value={val(stats?.low)}
         variant="low"
         subLabel="Informational"
+        onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('low') : undefined}
       />
     </div>
   );

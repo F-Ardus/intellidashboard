@@ -9,19 +9,24 @@ interface StatCardProps {
   variant: StatVariant;
   subLabel: string;
   icon?: React.ReactNode;
+  onClick?: () => void;
 }
 
 function formatValue(value: number): string {
   return value.toLocaleString('en-US');
 }
 
-export function StatCard({ label, value, variant, subLabel, icon }: StatCardProps) {
-  const cardClass = [styles.card, variant !== 'total' ? styles[variant] : '']
+export function StatCard({ label, value, variant, subLabel, icon, onClick }: StatCardProps) {
+  const cardClass = [
+    styles.card,
+    variant !== 'total' ? styles[variant] : '',
+    onClick ? styles.clickable : '',
+  ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <div className={cardClass}>
+    <div className={cardClass} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}>
       <div className={styles.header}>
         <span className={styles.label}>{label}</span>
         {icon && <span className={styles.icon}>{icon}</span>}
