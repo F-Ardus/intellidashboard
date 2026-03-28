@@ -1,0 +1,108 @@
+// ============================================================
+// DESIGN TOKENS — Augur Security Design System
+// ============================================================
+:root {
+  // Background layers
+  --bg-root: #0a0c10;
+  --bg-surface: #0f1117;
+  --bg-elevated: #161a23;
+  --bg-card: #1a1e28;
+  --bg-card-hover: #1e2230;
+  --bg-modal: #141820;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.7);
+  --bg-sidebar: #0d0f14;
+  --bg-sidebar-active: rgba(99, 131, 255, 0.12);
+  --bg-input: #12151c;
+
+  // Border colors
+  --border-subtle: #1e2230;
+  --border-default: #262b38;
+  --border-hover: #353b4d;
+  --border-active: #4a5270;
+  --border-focus: #6383ff;
+
+  // Text hierarchy
+  --text-primary: #e8eaf0;
+  --text-secondary: #8b90a0;
+  --text-tertiary: #5c6170;
+  --text-muted: #3e4352;
+  --text-inverse: #0a0c10;
+
+  // Augur brand
+  --augur-blue: #6383ff;
+  --augur-blue-dim: rgba(99, 131, 255, 0.15);
+  --augur-logo: #ffffff;
+
+  // Severity system
+  --severity-critical: #ff4757;
+  --severity-critical-bg: rgba(255, 71, 87, 0.12);
+  --severity-critical-border: rgba(255, 71, 87, 0.3);
+  --severity-high: #ff8c42;
+  --severity-high-bg: rgba(255, 140, 66, 0.12);
+  --severity-high-border: rgba(255, 140, 66, 0.3);
+  --severity-medium: #ffc542;
+  --severity-medium-bg: rgba(255, 197, 66, 0.12);
+  --severity-medium-border: rgba(255, 197, 66, 0.3);
+  --severity-low: #48c774;
+  --severity-low-bg: rgba(72, 199, 116, 0.12);
+  --severity-low-border: rgba(72, 199, 116, 0.3);
+
+  // Status / accent
+  --status-active: #48c774;
+  --status-warning: #ffc542;
+  --status-error: #ff4757;
+  --status-info: #6383ff;
+  --accent-orange: #e87a35;
+  --accent-teal: #3dd9c4;
+
+  // Tag colors
+  --tag-red: rgba(255, 71, 87, 0.15);
+  --tag-red-text: #ff6b7a;
+  --tag-red-border: rgba(255, 71, 87, 0.3);
+  --tag-blue: rgba(99, 131, 255, 0.15);
+  --tag-blue-text: #8ba3ff;
+  --tag-blue-border: rgba(99, 131, 255, 0.3);
+  --tag-purple: rgba(168, 130, 255, 0.15);
+  --tag-purple-text: #b89eff;
+  --tag-purple-border: rgba(168, 130, 255, 0.3);
+  --tag-teal: rgba(61, 217, 196, 0.15);
+  --tag-teal-text: #5ee8d2;
+  --tag-teal-border: rgba(61, 217, 196, 0.3);
+  --tag-gray: rgba(139, 144, 160, 0.12);
+  --tag-gray-text: #8b90a0;
+  --tag-gray-border: rgba(139, 144, 160, 0.2);
+
+  // Typography
+  --font-sans: 'DM Sans', 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-display: 'DM Sans', sans-serif;
+
+  // Spacing scale
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  // Radii
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-pill: 999px;
+
+  // Shadows
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-subtle);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
+  --shadow-modal: 0 12px 48px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-default);
+
+  // Layout
+  --sidebar-width: 220px;
+  --header-height: 56px;
+  --detail-width: 400px;
+}
