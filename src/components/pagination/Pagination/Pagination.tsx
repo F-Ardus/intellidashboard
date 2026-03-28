@@ -1,16 +1,19 @@
 import { buildPages } from './buildPages';
 import styles from './Pagination.module.scss';
 
+const LIMIT_OPTIONS = [10, 20, 50, 100];
+
 interface PaginationProps {
   page: number;
   totalPages: number;
   total: number;
   limit: number;
   onPageChange: (page: number) => void;
+  onLimitChange: (limit: number) => void;
 }
 
-export function Pagination({ page, totalPages, total, limit, onPageChange }: PaginationProps) {
-  if (totalPages <= 1) return null;
+export function Pagination({ page, totalPages, total, limit, onPageChange, onLimitChange }: PaginationProps) {
+  if (totalPages <= 1 && total <= (LIMIT_OPTIONS[0] ?? 10)) return null;
 
   const from = (page - 1) * limit + 1;
   const to = Math.min(page * limit, total);
@@ -21,6 +24,20 @@ export function Pagination({ page, totalPages, total, limit, onPageChange }: Pag
       <span className={styles.info}>
         Showing {from.toLocaleString('en-US')}–{to.toLocaleString('en-US')} of {total.toLocaleString('en-US')} indicators
       </span>
+
+      <div className={styles.limitSelect}>
+        <label className={styles.limitLabel} htmlFor="rows-per-page">Rows</label>
+        <select
+          id="rows-per-page"
+          className={styles.limitDropdown}
+          value={limit}
+          onChange={(e) => onLimitChange(Number(e.target.value))}
+        >
+          {LIMIT_OPTIONS.map((o) => (
+            <option key={o} value={o}>{o}</option>
+          ))}
+        </select>
+      </div>
 
       <div className={styles.controls}>
         <button

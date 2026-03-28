@@ -14,7 +14,7 @@ interface IndicatorTableProps {
   onSelect: (id: string) => void;
   hasFilters: boolean;
   checkedIds: Set<string>;
-  onToggleCheck: (id: string) => void;
+  onToggleCheck: (id: string, indicator: Indicator) => void;
   onToggleAll: () => void;
 }
 

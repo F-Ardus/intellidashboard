@@ -11,7 +11,7 @@ const DEFAULT_FILTERS: UIFilters = {
   type: undefined,
   source: undefined,
   page: 1,
-  limit: 20,
+  limit: 10,
 };
 
 export function useFilters() {
@@ -37,9 +37,13 @@ export function useFilters() {
     setFilters((prev) => ({ ...prev, page }));
   }, []);
 
+  const setLimit = useCallback((limit: number) => {
+    setFilters((prev) => ({ ...prev, limit, page: 1 }));
+  }, []);
+
   const reset = useCallback(() => {
     setFilters(DEFAULT_FILTERS);
   }, []);
 
-  return { filters, setSearch, setSeverity, setType, setSource, setPage, reset };
+  return { filters, setSearch, setSeverity, setType, setSource, setPage, setLimit, reset };
 }

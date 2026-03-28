@@ -1,0 +1,65 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2) var(--sp-8);
+  background: var(--augur-blue-dim);
+  border-bottom: 1px solid rgba(99, 131, 255, 0.25);
+  animation: fadeIn 0.15s ease;
+  gap: var(--sp-4);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.info {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--augur-blue);
+}
+
+.separator {
+  color: var(--augur-blue);
+  opacity: 0.4;
+  font-size: 12.5px;
+  line-height: 1;
+  user-select: none;
+}
+
+
+.pageNote {
+  font-size: 12.5px;
+  color: var(--augur-blue);
+  opacity: 0.8;
+  line-height: 1;
+}
+
+.selectAllBtn {
+  display: inline;
+  background: none;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--augur-blue);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+  vertical-align: baseline;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}

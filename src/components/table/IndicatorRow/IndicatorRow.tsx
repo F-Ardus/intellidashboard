@@ -11,7 +11,7 @@ interface IndicatorRowProps {
   isSelected: boolean;
   onSelect: (id: string) => void;
   isChecked: boolean;
-  onToggleCheck: (id: string) => void;
+  onToggleCheck: (id: string, indicator: Indicator) => void;
 }
 
 export function IndicatorRow({
@@ -30,7 +30,7 @@ export function IndicatorRow({
         <input
           type="checkbox"
           checked={isChecked}
-          onChange={() => onToggleCheck(indicator.id)}
+          onChange={() => onToggleCheck(indicator.id, indicator)}
           onClick={(e) => e.stopPropagation()}
           aria-label={`Select ${indicator.value}`}
         />

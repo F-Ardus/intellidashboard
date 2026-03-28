@@ -6,49 +6,88 @@ import { Sidebar } from './components/layout/Sidebar/Sidebar';
 import { Pagination } from './components/pagination/Pagination/Pagination';
 import { StatsRow } from './components/stats/StatsRow/StatsRow';
 import { IndicatorTable } from './components/table/IndicatorTable/IndicatorTable';
+import { SelectionBar } from './components/toolbar/SelectionBar/SelectionBar';
 import { Toolbar } from './components/toolbar/Toolbar/Toolbar';
 import { useFilters } from './hooks/useFilters';
 import { useIndicators } from './hooks/useIndicators';
 import { useStats } from './hooks/useStats';
+import type { Indicator } from './types/indicator';
+import { exportToCsv } from './utils/exportCsv';
+import { fetchIndicators } from './api/indicators';
 import styles from './App.module.scss';
 
 function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [checkedIndicators, setCheckedIndicators] = useState<Map<string, Indicator>>(new Map());
+  const [allPagesSelected, setAllPagesSelected] = useState(false);
 
   const { stats, loading: statsLoading } = useStats();
-  const { filters, setSearch, setSeverity, setType, setSource, setPage, reset } = useFilters();
+  const { filters, setSearch, setSeverity, setType, setSource, setPage, setLimit, reset } = useFilters();
   const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters);
 
   const hasActiveFilters = Boolean(
     filters.search || filters.severity || filters.type || filters.source,
   );
 
-  const handleToggleCheck = useCallback((id: string) => {
-    setCheckedIds((prev) => {
-      const next = new Set(prev);
+  const checkedIds = new Set(checkedIndicators.keys());
+  const allOnPageSelected =
+    indicators.length > 0 && indicators.every((i) => checkedIndicators.has(i.id));
+
+  const handleToggleCheck = useCallback((id: string, indicator: Indicator) => {
+    setAllPagesSelected(false);
+    setCheckedIndicators((prev) => {
+      const next = new Map(prev);
       if (next.has(id)) next.delete(id);
-      else next.add(id);
+      else next.set(id, indicator);
       return next;
     });
   }, []);
 
   const handleToggleAll = useCallback(() => {
-    setCheckedIds((prev) => {
-      const allIds = indicators.map((i) => i.id);
-      const allChecked = allIds.every((id) => prev.has(id));
+    setAllPagesSelected(false);
+    setCheckedIndicators((prev) => {
+      const allChecked = indicators.every((i) => prev.has(i.id));
+      const next = new Map(prev);
       if (allChecked) {
-        const next = new Set(prev);
-        allIds.forEach((id) => next.delete(id));
-        return next;
+        indicators.forEach((i) => next.delete(i.id));
+      } else {
+        indicators.forEach((i) => next.set(i.id, i));
       }
-      return new Set([...prev, ...allIds]);
+      return next;
     });
   }, [indicators]);
 
+  const handleClearSelection = useCallback(() => {
+    setCheckedIndicators(new Map());
+    setAllPagesSelected(false);
+  }, []);
+
+  const handleSelectAllPages = useCallback(() => {
+    setAllPagesSelected(true);
+  }, []);
+
+  const handleExport = useCallback(async () => {
+    if (allPagesSelected) {
+      const response = await fetchIndicators({
+        search: filters.search,
+        severity: filters.severity,
+        type: filters.type,
+        page: 1,
+        limit: total,
+      });
+      exportToCsv(response.data, 'indicators-all.csv');
+    } else if (checkedIndicators.size > 0) {
+      exportToCsv(Array.from(checkedIndicators.values()), 'indicators-selected.csv');
+    } else {
+      exportToCsv(indicators, 'indicators-export.csv');
+    }
+  }, [allPagesSelected, checkedIndicators, indicators, filters, total]);
+
+  const showSelectionBar = allPagesSelected || checkedIndicators.size > 0;
+
   return (
     <AppLayout sidebar={<Sidebar />}>
-      <PageHeader />
+      <PageHeader onExport={handleExport} />
       <StatsRow stats={stats} loading={statsLoading} />
       <Toolbar
         search={filters.search ?? ''}
@@ -62,6 +101,17 @@ function App() {
         onClear={reset}
         hasActiveFilters={hasActiveFilters}
       />
+      {showSelectionBar && (
+        <SelectionBar
+          count={allPagesSelected ? total : checkedIndicators.size}
+          total={total}
+          allOnPageSelected={allOnPageSelected}
+          allPagesSelected={allPagesSelected}
+          onExport={handleExport}
+          onClear={handleClearSelection}
+          onSelectAllPages={handleSelectAllPages}
+        />
+      )}
       <div className={styles.contentRow}>
         <div className={styles.tableArea}>
           <IndicatorTable
@@ -80,6 +130,7 @@ function App() {
             total={total}
             limit={filters.limit ?? 20}
             onPageChange={setPage}
+            onLimitChange={setLimit}
           />
         </div>
         {selectedId && (
