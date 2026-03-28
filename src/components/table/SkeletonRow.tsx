@@ -3,6 +3,7 @@ import styles from './SkeletonRow.module.scss';
 export function SkeletonRow() {
   return (
     <tr className={styles.row}>
+      <td className={styles.cell} />
       <td className={styles.cell}><div className={styles.bone} style={{ width: 160 }} /></td>
       <td className={styles.cell}><div className={styles.bone} style={{ width: 60 }} /></td>
       <td className={styles.cell}><div className={styles.bone} style={{ width: 56 }} /></td>

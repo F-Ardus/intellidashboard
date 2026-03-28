@@ -1,6 +1,6 @@
 import styles from './EmptyState.module.scss';
 
-const COLUMN_COUNT = 7;
+const COLUMN_COUNT = 8;
 
 interface EmptyStateProps {
   hasFilters: boolean;

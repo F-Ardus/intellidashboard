@@ -10,14 +10,31 @@ interface IndicatorRowProps {
   indicator: Indicator;
   isSelected: boolean;
   onSelect: (id: string) => void;
+  isChecked: boolean;
+  onToggleCheck: (id: string) => void;
 }
 
-export function IndicatorRow({ indicator, isSelected, onSelect }: IndicatorRowProps) {
+export function IndicatorRow({
+  indicator,
+  isSelected,
+  onSelect,
+  isChecked,
+  onToggleCheck,
+}: IndicatorRowProps) {
   return (
     <tr
       className={`${styles.row}${isSelected ? ` ${styles.selected}` : ''}`}
       onClick={() => onSelect(indicator.id)}
     >
+      <td className={`${styles.cell} ${styles.checkCell}`}>
+        <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={() => onToggleCheck(indicator.id)}
+          onClick={(e) => e.stopPropagation()}
+          aria-label={`Select ${indicator.value}`}
+        />
+      </td>
       <td className={styles.cell}>
         <span className={styles.indicator}>{indicator.value}</span>
       </td>
