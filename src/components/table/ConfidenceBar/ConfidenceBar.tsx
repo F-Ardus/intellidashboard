@@ -1,4 +1,4 @@
-import type { Severity } from '../../types/indicator';
+import type { Severity } from '../../../types/indicator';
 import styles from './ConfidenceBar.module.scss';
 
 interface ConfidenceBarProps {

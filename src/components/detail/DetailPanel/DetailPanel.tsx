@@ -1,9 +1,9 @@
-import { Button } from '../common/Button';
-import { SeverityBadge } from '../table/SeverityBadge';
-import { TagPill } from '../table/TagPill';
-import { TypeIcon } from '../table/TypeIcon';
-import { useIndicatorDetail } from '../../hooks/useIndicatorDetail';
-import { formatAbsoluteTime, formatRelativeTime } from '../../utils/time';
+import { Button } from '../../common/Button/Button';
+import { SeverityBadge } from '../../table/SeverityBadge/SeverityBadge';
+import { TagPill } from '../../table/TagPill/TagPill';
+import { TypeIcon } from '../../table/TypeIcon/TypeIcon';
+import { useIndicatorDetail } from '../../../hooks/useIndicatorDetail';
+import { formatAbsoluteTime, formatRelativeTime } from '../../../utils/time';
 import styles from './DetailPanel.module.scss';
 
 const SEVERITY_COLORS: Record<string, string> = {

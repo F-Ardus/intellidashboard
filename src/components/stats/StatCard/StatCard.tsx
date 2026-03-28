@@ -1,4 +1,4 @@
-import type { Severity } from '../../types/indicator';
+import type { Severity } from '../../../types/indicator';
 import styles from './StatCard.module.scss';
 
 type StatVariant = 'total' | Severity;

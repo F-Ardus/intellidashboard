@@ -1,10 +1,10 @@
-import type { Indicator } from '../../types/indicator';
-import { formatRelativeTime } from '../../utils/time';
-import { ConfidenceBar } from './ConfidenceBar';
+import type { Indicator } from '../../../types/indicator';
+import { formatRelativeTime } from '../../../utils/time';
+import { ConfidenceBar } from '../ConfidenceBar/ConfidenceBar';
 import styles from './IndicatorRow.module.scss';
-import { SeverityBadge } from './SeverityBadge';
-import { TagPill } from './TagPill';
-import { TypeIcon } from './TypeIcon';
+import { SeverityBadge } from '../SeverityBadge/SeverityBadge';
+import { TagPill } from '../TagPill/TagPill';
+import { TypeIcon } from '../TypeIcon/TypeIcon';
 
 interface IndicatorRowProps {
   indicator: Indicator;

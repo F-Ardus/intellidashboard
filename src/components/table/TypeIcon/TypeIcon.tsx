@@ -1,4 +1,4 @@
-import type { IndicatorType } from '../../types/indicator';
+import type { IndicatorType } from '../../../types/indicator';
 
 interface TypeIconProps {
   type: IndicatorType;

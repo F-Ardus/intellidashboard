@@ -1,7 +1,7 @@
-import type { IndicatorType, Severity } from '../../types/indicator';
-import { Button } from '../common/Button';
-import { FilterSelect } from './FilterSelect';
-import { SearchInput } from './SearchInput';
+import type { IndicatorType, Severity } from '../../../types/indicator';
+import { Button } from '../../common/Button/Button';
+import { FilterSelect } from '../FilterSelect/FilterSelect';
+import { SearchInput } from '../SearchInput/SearchInput';
 import styles from './Toolbar.module.scss';
 
 const SEVERITY_OPTIONS = [

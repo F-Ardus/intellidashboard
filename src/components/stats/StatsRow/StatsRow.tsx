@@ -1,5 +1,5 @@
-import type { Stats } from '../../types/stats';
-import { StatCard } from './StatCard';
+import type { Stats } from '../../../types/stats';
+import { StatCard } from '../StatCard/StatCard';
 import styles from './StatsRow.module.scss';
 
 interface StatsRowProps {

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import type { Indicator } from '../../types/indicator';
-import { EmptyState } from './EmptyState';
+import type { Indicator } from '../../../types/indicator';
+import { EmptyState } from '../EmptyState/EmptyState';
 import styles from './IndicatorTable.module.scss';
-import { IndicatorRow } from './IndicatorRow';
-import { SkeletonRow } from './SkeletonRow';
+import { IndicatorRow } from '../IndicatorRow/IndicatorRow';
+import { SkeletonRow } from '../SkeletonRow/SkeletonRow';
 
 const SKELETON_COUNT = 5;
 

@@ -1,5 +1,5 @@
-import { Button } from '../common/Button';
-import { LiveFeedBadge } from './LiveFeedBadge';
+import { Button } from '../../common/Button/Button';
+import { LiveFeedBadge } from '../LiveFeedBadge/LiveFeedBadge';
 import styles from './PageHeader.module.scss';
 
 interface PageHeaderProps {
