@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { DetailPanel } from './components/detail/DetailPanel/DetailPanel';
 import { PageHeader } from './components/header/PageHeader/PageHeader';
+import { AddIndicatorModal } from './components/indicators/AddIndicatorModal/AddIndicatorModal';
 import { StatsModal } from './components/stats/StatsModal/StatsModal';
+import { Toast } from './components/common/Toast/Toast';
 import { AppLayout } from './components/layout/AppLayout/AppLayout';
 import { Sidebar } from './components/layout/Sidebar/Sidebar';
 import { Pagination } from './components/pagination/Pagination/Pagination';
@@ -26,8 +28,14 @@ function App() {
   const [allPagesSelected, setAllPagesSelected] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [localIndicators, setLocalIndicators] = useState<Indicator[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
 
-  const handleRefresh = useCallback(() => setRefreshKey((k) => k + 1), []);
+  const handleRefresh = useCallback(() => {
+    setRefreshKey((k) => k + 1);
+    setLocalIndicators([]);
+  }, []);
   const { secondsLeft } = useAutoRefresh(handleRefresh);
 
   const { stats, loading: statsLoading } = useStats(refreshKey);
@@ -35,6 +43,15 @@ function App() {
   const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters, refreshKey);
   const { sort, toggleSort } = useSort();
   const sortedIndicators = useMemo(() => sortIndicators(indicators, sort), [indicators, sort]);
+  const displayIndicators = useMemo(
+    () => [...localIndicators, ...sortedIndicators],
+    [localIndicators, sortedIndicators],
+  );
+
+  const handleAddIndicator = useCallback((indicator: Indicator) => {
+    setLocalIndicators((prev) => [indicator, ...prev]);
+    setToast('Indicator added successfully');
+  }, []);
   const availableTags = useAvailableTags(filters);
 
   const hasActiveFilters = Boolean(
@@ -102,7 +119,7 @@ function App() {
   return (
     <>
     <AppLayout sidebar={<Sidebar />}>
-      <PageHeader onExport={handleExport} secondsLeft={secondsLeft} />
+      <PageHeader onExport={handleExport} secondsLeft={secondsLeft} onAddIndicator={() => setAddModalOpen(true)} />
       <StatsRow
         stats={stats}
         loading={statsLoading}
@@ -138,7 +155,7 @@ function App() {
       <div className={styles.contentRow}>
         <div className={styles.tableArea}>
           <IndicatorTable
-            indicators={sortedIndicators}
+            indicators={displayIndicators}
             loading={indicatorsLoading}
             selectedId={selectedId}
             onSelect={setSelectedId}
@@ -165,6 +182,12 @@ function App() {
     </AppLayout>
     {statsModalOpen && stats !== null && (
       <StatsModal stats={stats} onClose={() => setStatsModalOpen(false)} />
+    )}
+    {addModalOpen && (
+      <AddIndicatorModal onClose={() => setAddModalOpen(false)} onAdd={handleAddIndicator} />
+    )}
+    {toast !== null && (
+      <Toast message={toast} onDismiss={() => setToast(null)} />
     )}
     </>
   );

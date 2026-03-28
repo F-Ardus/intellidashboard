@@ -1,4 +1,5 @@
 import type { IndicatorType, Severity } from '../../../types/indicator';
+import { SOURCE_OPTIONS } from '../../../constants/sources';
 import { Button } from '../../common/Button/Button';
 import { TagFilter } from '../TagFilter/TagFilter';
 import { FilterSelect } from '../FilterSelect/FilterSelect';
@@ -18,12 +19,6 @@ const TYPE_OPTIONS = [
   { value: 'hash', label: 'File Hash' },
   { value: 'url', label: 'URL' },
 ];
-
-const SOURCE_OPTIONS = [
-  'AbuseIPDB', 'OTX AlienVault', 'VirusTotal', 'Emerging Threats', 'MalwareBazaar',
-  'PhishTank', 'Spamhaus', 'ThreatFox', 'URLhaus', 'CIRCL', 'Shodan',
-  'GreyNoise', 'BinaryEdge', 'Censys', 'Silent Push', 'DomainTools',
-].map((s) => ({ value: s, label: s }));
 
 interface ToolbarProps {
   search: string;
