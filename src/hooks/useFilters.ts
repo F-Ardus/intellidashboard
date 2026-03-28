@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { IndicatorFilters, IndicatorType, Severity } from '../types/indicator';
 
 export interface UIFilters extends IndicatorFilters {
@@ -17,29 +17,29 @@ const DEFAULT_FILTERS: UIFilters = {
 export function useFilters() {
   const [filters, setFilters] = useState<UIFilters>(DEFAULT_FILTERS);
 
-  function setSearch(search: string) {
+  const setSearch = useCallback((search: string) => {
     setFilters((prev) => ({ ...prev, search, page: 1 }));
-  }
+  }, []);
 
-  function setSeverity(severity: Severity | undefined) {
+  const setSeverity = useCallback((severity: Severity | undefined) => {
     setFilters((prev) => ({ ...prev, severity, page: 1 }));
-  }
+  }, []);
 
-  function setType(type: IndicatorType | undefined) {
+  const setType = useCallback((type: IndicatorType | undefined) => {
     setFilters((prev) => ({ ...prev, type, page: 1 }));
-  }
+  }, []);
 
-  function setSource(source: string | undefined) {
+  const setSource = useCallback((source: string | undefined) => {
     setFilters((prev) => ({ ...prev, source, page: 1 }));
-  }
+  }, []);
 
-  function setPage(page: number) {
+  const setPage = useCallback((page: number) => {
     setFilters((prev) => ({ ...prev, page }));
-  }
+  }, []);
 
-  function reset() {
+  const reset = useCallback(() => {
     setFilters(DEFAULT_FILTERS);
-  }
+  }, []);
 
   return { filters, setSearch, setSeverity, setType, setSource, setPage, reset };
 }

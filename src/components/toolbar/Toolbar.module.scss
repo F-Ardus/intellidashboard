@@ -1,0 +1,23 @@
+.toolbar {
+  padding: var(--sp-4) var(--sp-8);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-default);
+  margin: 0 var(--sp-2);
+  flex-shrink: 0;
+}

@@ -1,0 +1,37 @@
+.wrapper {
+  position: relative;
+  width: 260px;
+}
+
+.icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  padding: 7px 12px 7px 34px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  &:focus {
+    border-color: var(--augur-blue);
+    box-shadow: 0 0 0 2px var(--augur-blue-dim);
+  }
+}
