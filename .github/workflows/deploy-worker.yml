@@ -1,0 +1,69 @@
+name: Deploy Cloudflare Worker
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: cf-worker
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Deploy Worker via Wrangler ─────────────────────────────────────
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+
+      # ── Idempotently create the DNS record ────────────────────────────
+      # The route in wrangler.toml binds the worker to api.intellidashboard.fardus.dev,
+      # but Cloudflare requires a proxied DNS record to exist in the zone first.
+      # We use an AAAA record pointing to 100:: (Cloudflare's recommended dummy IPv6
+      # for worker-route-only records). The proxied flag (orange cloud) means
+      # Cloudflare intercepts traffic and the dummy IP is never exposed.
+      #
+      # Cache-Control: max-age=43200 in the worker responses instructs Cloudflare's
+      # CDN to cache each unique URL for 12 hours, so the worker computes a given
+      # response at most twice per day regardless of request volume.
+      - name: Ensure DNS record exists (idempotent)
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          ZONE=$(curl -sf \
+            "https://api.cloudflare.com/client/v4/zones?name=fardus.dev" \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            | jq -r '.result[0].id')
+
+          echo "Zone ID: $ZONE"
+
+          COUNT=$(curl -sf \
+            "https://api.cloudflare.com/client/v4/zones/$ZONE/dns_records?name=augur-api.fardus.dev&type=AAAA" \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            | jq '.result | length')
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "Creating AAAA record for augur-api.fardus.dev …"
+            curl -sf -X POST \
+              "https://api.cloudflare.com/client/v4/zones/$ZONE/dns_records" \
+              -H "Authorization: Bearer $CF_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "type":    "AAAA",
+                "name":    "augur-api.fardus.dev",
+                "content": "100::",
+                "ttl":     1,
+                "proxied": true
+              }' | jq .
+            echo "DNS record created."
+          else
+            echo "DNS record already exists — skipping."
+          fi

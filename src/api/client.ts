@@ -8,11 +8,15 @@ export class ApiError extends Error {
   }
 }
 
+// In production (GitHub Pages build) VITE_API_BASE is set to the CF Worker origin.
+// In dev the env var is absent, so relative /api/* is used — Vite proxies to localhost:3001.
+const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+
 export function buildUrl(
   path: string,
   params?: Record<string, string | number | undefined>,
 ): string {
-  const base = `/api${path}`;
+  const base = `${API_BASE}/api${path}`;
   if (!params) return base;
 
   const query = new URLSearchParams();
@@ -35,10 +39,7 @@ export async function apiFetch<T>(
   const response = await fetch(url, { signal });
 
   if (!response.ok) {
-    throw new ApiError(
-      `API error: ${response.statusText}`,
-      response.status,
-    );
+    throw new ApiError(`API error: ${response.statusText}`, response.status);
   }
 
   return response.json() as Promise<T>;

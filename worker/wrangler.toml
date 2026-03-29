@@ -1,0 +1,9 @@
+name              = "augur-api"
+main              = "index.js"
+compatibility_date = "2024-01-15"
+workers_dev       = false
+
+# Only serve on the custom subdomain — no *.workers.dev exposure
+[[routes]]
+pattern   = "augur-api.fardus.dev/*"
+zone_name = "fardus.dev"
