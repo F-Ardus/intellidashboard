@@ -18,7 +18,7 @@ export function PageHeader({ onExport, onAddIndicator, secondsLeft = 30 }: PageH
         <p>{t.header.subtitle}</p>
       </div>
       <div className={styles.actions}>
-        <span className={styles.liveFeed}>
+        <span className={styles.liveFeed} data-tour="refresh">
           <LiveFeedBadge secondsLeft={secondsLeft} />
         </span>
         <Button variant="secondary" size="sm" onClick={onExport}>

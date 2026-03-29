@@ -24,7 +24,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
   const pages = buildPages(page, totalPages);
 
   return (
-    <div className={styles.pagination}>
+    <div className={styles.pagination} data-tour="pagination">
       <span className={styles.info}>
         {fmt(t.pagination.showing, {
           from: from.toLocaleString(intlLocale),

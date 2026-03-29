@@ -81,7 +81,7 @@ export function IndicatorTable({
   const densityClass = density === 'compact' ? styles.densityCompact : density === 'comfortable' ? styles.densityComfortable : styles.densityNormal;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-tour="table">
     <div className={styles.scrollArea}>
       <table className={`${styles.table} ${densityClass}`}>
         <thead>

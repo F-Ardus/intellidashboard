@@ -35,6 +35,7 @@ export function AppLayout({ sidebar, children, mobileNavOpen, onMobileNavOpen, o
           onClick={onMobileNavOpen}
           aria-label="Open navigation"
           aria-expanded={mobileNavOpen}
+          data-tour="mobile-menu"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <line x1="3" y1="6" x2="21" y2="6" />

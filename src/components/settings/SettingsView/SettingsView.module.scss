@@ -343,7 +343,8 @@
     gap: var(--sp-4);
   }
 
-  .rowLast {
+  .rowLast,
+  .rowCenter {
     align-items: flex-start;
   }
 

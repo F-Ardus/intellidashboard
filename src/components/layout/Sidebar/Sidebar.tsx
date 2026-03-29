@@ -146,6 +146,7 @@ export function Sidebar({ activeView, onNavigate }: SidebarProps) {
         <button
           className={`${styles.navItem}${activeView === 'settings' ? ` ${styles.active}` : ''}`}
           onClick={() => onNavigate('settings')}
+          data-tour="settings-nav"
         >
           <SettingsIcon />
           {t.nav.settings}

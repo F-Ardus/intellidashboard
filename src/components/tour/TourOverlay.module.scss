@@ -1,0 +1,147 @@
+// ── Tour overlay ────────────────────────────────────────────────────────────
+
+// Blocks all pointer interaction with the page behind the tour
+.blocker {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  cursor: default;
+}
+
+// Spotlight: transparent box with a huge box-shadow that dims everything around it.
+// The element behind it shows through, creating the "cutout" effect.
+.spotlight {
+  position: fixed;
+  z-index: 9001;
+  border-radius: 8px;
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.72);
+  outline: 2px solid rgba(99, 131, 255, 0.55);
+  outline-offset: 0;
+  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+
+// Used for the welcome/center step where there is no target element
+.dimOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9001;
+  background: rgba(0, 0, 0, 0.72);
+  pointer-events: none;
+}
+
+// ── Tooltip ──────────────────────────────────────────────────────────────────
+
+.tooltip {
+  position: fixed;
+  z-index: 9002;
+  width: 292px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md, 8px);
+  border-top: 3px solid #6383ff;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+  padding: 18px 18px 14px;
+  animation: tourFadeIn 0.18s ease;
+}
+
+@keyframes tourFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// Re-run the animation when the step changes by keying the step into a class name
+// (handled via unique step index applied externally if needed)
+
+.title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.desc {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.58;
+  color: var(--text-secondary);
+}
+
+// ── Tooltip footer ───────────────────────────────────────────────────────────
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.counter {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chevronBtn {
+  background: none;
+  border: 1px solid var(--border-default);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+
+  &:hover:not(:disabled) {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}
+
+.skipBtn {
+  background: none;
+  border: none;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  font-family: var(--font-sans);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.nextBtn {
+  background: #6383ff;
+  border: none;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  font-family: var(--font-sans);
+
+  &:hover {
+    background: #7a97ff;
+  }
+}

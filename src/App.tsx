@@ -19,6 +19,8 @@ import { StatsRow } from './components/stats/StatsRow/StatsRow';
 import { IndicatorTable } from './components/table/IndicatorTable/IndicatorTable';
 import { SelectionBar } from './components/toolbar/SelectionBar/SelectionBar';
 import { Toolbar } from './components/toolbar/Toolbar/Toolbar';
+import { useTour } from './hooks/useTour';
+import { TourOverlay } from './components/tour/TourOverlay';
 import { useAutoRefresh } from './hooks/useAutoRefresh';
 import { useAvailableTags } from './hooks/useAvailableTags';
 import { useFilters } from './hooks/useFilters';
@@ -57,6 +59,7 @@ function App() {
     setLocalIndicators([]);
   }, []);
   const { secondsLeft } = useAutoRefresh(handleRefresh);
+  const { active: tourActive, step: tourStep, steps: tourSteps, total: tourTotal, next: tourNext, prev: tourPrev, skip: tourSkip } = useTour();
 
   const { stats, loading: statsLoading } = useStats(refreshKey);
   const { filters, setSearch, setSeverity, setType, setSource, setTags, setPage, setLimit, reset } = useFilters();
@@ -241,6 +244,16 @@ function App() {
       )}
       {toast !== null && (
         <Toast message={toast} onDismiss={() => setToast(null)} />
+      )}
+      {tourActive && (
+        <TourOverlay
+          steps={tourSteps}
+          step={tourStep}
+          total={tourTotal}
+          onNext={tourNext}
+          onPrev={tourPrev}
+          onSkip={tourSkip}
+        />
       )}
       </>
     </LocaleContext.Provider>

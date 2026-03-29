@@ -181,7 +181,7 @@ export function Toolbar({
 
       <div className={styles.divider} />
 
-      <div className={styles.group}>
+      <div className={styles.group} data-tour="filters">
         <FilterSelect
           value={severity ?? ''}
           onChange={(v) => onSeverityChange(v as Severity || undefined)}
@@ -209,7 +209,7 @@ export function Toolbar({
         </Button>
       )}
 
-      <div className={styles.presetsSlot}>
+      <div className={styles.presetsSlot} data-tour="presets">
         <PresetsDropdown
           presets={presets}
           activePresetId={activePresetId}

@@ -27,7 +27,7 @@ export function StatsRow({ stats, loading, onViewStats, onFilterBySeverity }: St
   const ready = stats !== null && !loading;
 
   return (
-    <div className={styles.row}>
+    <div className={styles.row} data-tour="stats">
       <StatCard
         label={t.stats.total}
         value={val(stats?.total)}

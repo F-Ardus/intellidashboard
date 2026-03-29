@@ -78,13 +78,13 @@
     border: none;
     border-radius: var(--radius-md);
     background: none;
-    color: var(--text-secondary);
+    color: var(--text-sidebar);
     cursor: pointer;
     transition: background 0.12s ease, color 0.12s ease;
 
     &:hover {
-      background: var(--bg-card);
-      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-sidebar-hover);
     }
 
     &:focus-visible {
@@ -143,6 +143,11 @@
   .main {
     flex: 1;
     min-height: 0; /* override desktop min-height; flex:1 handles height on mobile */
+  }
+
+  /* Give the column a defined height so .main { flex: 1 } actually fills the viewport */
+  .layout {
+    min-height: 100dvh;
   }
 }
 
