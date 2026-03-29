@@ -24,19 +24,23 @@
   // Text hierarchy
   --text-primary: #e8eaf0;
   --text-secondary: #8b90a0;
-  --text-tertiary: #7a8494;
-  --text-muted: #7a8294;
+  --text-tertiary: #808a98;
+  --text-muted: #808298;
   --text-inverse: #0a0c10;
 
   // Sidebar text (separate from content area so light theme sidebar stays readable)
   --text-sidebar: #8b90a0;
   --text-sidebar-hover: #e8eaf0;
-  --text-sidebar-active: #6383ff;
+  --text-sidebar-active: var(--augur-blue);
 
   // Augur brand
   --augur-blue: #6383ff;
   --augur-blue-dim: rgba(99, 131, 255, 0.15);
   --augur-logo: #ffffff;
+  /* Primary button uses a darker shade so white text passes 4.5:1 (#6383ff only gives 3.4:1) */
+  --btn-primary-bg: #4a6be0;
+  /* Sidebar badge text — must contrast against --severity-critical used as solid background */
+  --badge-text: #12000a;
 
   // Severity system
   --severity-critical: #ff4757;

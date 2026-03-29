@@ -264,12 +264,12 @@
 }
 
 .segmentBtnActive {
-  background: var(--augur-blue);
+  background: var(--btn-primary-bg);
   color: #fff;
   font-weight: 600;
 
   &:hover {
-    background: var(--augur-blue);
+    background: var(--btn-primary-bg);
     color: #fff;
   }
 }

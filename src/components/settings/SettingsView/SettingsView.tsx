@@ -89,6 +89,7 @@ export function SettingsView({ theme, onThemeChange, tablePrefs, onDensityChange
           <button
             role="switch"
             aria-checked={theme === 'system'}
+            aria-label={t.settings.systemTheme}
             className={`${styles.toggle} ${theme === 'system' ? styles.toggleOn : ''}`}
             onClick={() => {
               if (theme === 'system') {
@@ -171,6 +172,7 @@ export function SettingsView({ theme, onThemeChange, tablePrefs, onDensityChange
           <button
             role="switch"
             aria-checked={tablePrefs.expandTags}
+            aria-label={t.settings.expandTags}
             className={`${styles.toggle} ${tablePrefs.expandTags ? styles.toggleOn : ''}`}
             onClick={() => onExpandTagsChange(!tablePrefs.expandTags)}
           >

@@ -29,9 +29,10 @@
   --text-muted:     #5a6070;
   --text-inverse:   #ffffff;
 
-  --augur-blue:     #4060e0;
-  --augur-blue-dim: rgba(64, 96, 224, 0.12);
-  --augur-logo:     #ffffff;
+  --augur-blue:      #4060e0;
+  --augur-blue-dim:  rgba(64, 96, 224, 0.12);
+  --augur-logo:      #ffffff;
+  --btn-primary-bg:  #4060e0; /* matches brand blue; white text = 5.3:1 ✓ */
 
   /* Tags: dark theme uses pale tints on dark bg; light theme needs richer bg + dark text */
   --tag-red:           #ffe0e3;
@@ -55,6 +56,14 @@
   --text-sidebar:        #a0a8c0;
   --text-sidebar-hover:  #1a1d26;
   --text-sidebar-active: #7a9fff;
+
+  /* Severity text: neon shades fail 4.5:1 on light backgrounds — use darker accessible tones */
+  --severity-critical: #c70014;
+  /* Badge sits on the darker #c70014 — white passes 6.1:1, near-black only 3.3:1 */
+  --badge-text: #ffffff;
+  --severity-high:     #a04800;
+  --severity-medium:   #8a6200;
+  --severity-low:      #146032;
 
   --shadow-card:    0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-subtle);
   --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--border-subtle);
@@ -81,13 +90,17 @@
 
   --text-primary:   #e0ede6;
   --text-secondary: #88a896;
-  --text-tertiary:  #5a8070;
+  --text-tertiary:  #709e86;
   --text-muted:     #6a9080;
   --text-inverse:   #080d0a;
 
   --augur-blue:     #3dd9a0;
   --augur-blue-dim: rgba(61, 217, 160, 0.15);
   --augur-logo:     #ffffff;
+  --btn-primary-bg: #1a7a58; /* dark teal; white text = 5.5:1 ✓ */
+
+  /* Tag red text: #ff6b7a fails (4.46:1) when layered over selected-row tint; bump slightly */
+  --tag-red-text: #ff8090;
 }
 
 [data-theme="dusk"] {
@@ -110,13 +123,14 @@
 
   --text-primary:   #ece8f8;
   --text-secondary: #9088b0;
-  --text-tertiary:  #7a708e;
+  --text-tertiary:  #9488b8;
   --text-muted:     #8a80b0;
   --text-inverse:   #0c0a14;
 
   --augur-blue:     #a87aff;
   --augur-blue-dim: rgba(168, 122, 255, 0.15);
   --augur-logo:     #ffffff;
+  --btn-primary-bg: #6840c8; /* dark purple; white text = 5.2:1 ✓ */
 }
 
 [data-theme="terminal"] {
@@ -146,4 +160,5 @@
   --augur-blue:     #00ff41;
   --augur-blue-dim: rgba(0, 255, 65, 0.10);
   --augur-logo:     #00ff41;
+  --btn-primary-bg: #008020; /* dark green; white text = 5.8:1 ✓ */
 }

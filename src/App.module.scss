@@ -1,6 +1,7 @@
 .contentRow {
   display: flex;
-  align-items: flex-start;
+  flex: 1;
+  min-height: 0;
 }
 
 .tableArea {

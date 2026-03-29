@@ -75,11 +75,11 @@
 
 .caret {
   font-size: 9px;
-  opacity: 0.3;
+  color: var(--text-tertiary);
   line-height: 1;
-  transition: opacity 0.15s ease;
+  transition: color 0.15s ease;
 }
 
 .caretActive {
-  opacity: 1;
+  color: var(--text-primary);
 }

@@ -24,9 +24,9 @@
 }
 
 .primary {
-  background: var(--augur-blue);
+  background: var(--btn-primary-bg);
   color: white;
-  border-color: var(--augur-blue);
+  border-color: var(--btn-primary-bg);
 
   &:hover:not(:disabled) {
     filter: brightness(1.12);
