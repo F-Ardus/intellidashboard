@@ -1,0 +1,133 @@
+.view {
+  padding: var(--sp-8);
+  max-width: 720px;
+}
+
+.header {
+  margin-bottom: var(--sp-8);
+  padding-bottom: var(--sp-6);
+  border-bottom: 1px solid var(--border-subtle);
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: var(--sp-1);
+  }
+}
+
+.section {
+  margin-bottom: var(--sp-8);
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-4);
+}
+
+/* ── Setting row ── */
+
+.row {
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--sp-5);
+}
+
+.rowLabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.optionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.optionDesc {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ── Theme card grid ── */
+
+.themeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--sp-4);
+}
+
+.themeCard {
+  background: var(--bg-card);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--augur-blue);
+    outline-offset: 2px;
+  }
+}
+
+.themeCardActive {
+  border-color: var(--augur-blue);
+  box-shadow: 0 0 0 3px var(--augur-blue-dim);
+}
+
+.themePreview {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--bg-elevated);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.themeName {
+  display: block;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+
+  .themeCardActive & {
+    color: var(--augur-blue);
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 480px) {
+  .view {
+    padding: var(--sp-4);
+  }
+
+  .themeGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

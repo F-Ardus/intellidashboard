@@ -1,0 +1,126 @@
+// ============================================================
+// THEME OVERRIDES
+// Applied via [data-theme] on <html>.
+// Midnight (the default) is defined in _tokens.scss as :root.
+// Only tokens that differ from Midnight are listed here.
+// ============================================================
+
+[data-theme="light"] {
+  --bg-root:           #f0f2f5;
+  --bg-surface:        #ffffff;
+  --bg-elevated:       #f5f6f9;
+  --bg-card:           #ffffff;
+  --bg-card-hover:     #eef1f8;
+  --bg-modal:          #ffffff;
+  --bg-modal-overlay:  rgba(15, 17, 23, 0.55);
+  --bg-sidebar:        #1e2235;
+  --bg-sidebar-active: rgba(64, 96, 224, 0.15);
+  --bg-input:          #f0f2f6;
+
+  --border-subtle:  #e4e7ef;
+  --border-default: #d0d4e2;
+  --border-hover:   #b0b6cc;
+  --border-active:  #8896cc;
+  --border-focus:   #4060e0;
+
+  --text-primary:   #1a1d26;
+  --text-secondary: #4a5068;
+  --text-tertiary:  #606780;
+  --text-muted:     #5a6070;
+  --text-inverse:   #ffffff;
+
+  --augur-blue:     #4060e0;
+  --augur-blue-dim: rgba(64, 96, 224, 0.12);
+  --augur-logo:     #ffffff;
+
+  --shadow-card:    0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-subtle);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--border-subtle);
+  --shadow-modal:   0 12px 48px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--border-default);
+}
+
+[data-theme="forest"] {
+  --bg-root:           #080d0a;
+  --bg-surface:        #0d1410;
+  --bg-elevated:       #121d16;
+  --bg-card:           #162019;
+  --bg-card-hover:     #1a2620;
+  --bg-modal:          #111a14;
+  --bg-modal-overlay:  rgba(0, 0, 0, 0.75);
+  --bg-sidebar:        #0a100c;
+  --bg-sidebar-active: rgba(61, 217, 160, 0.12);
+  --bg-input:          #0f1812;
+
+  --border-subtle:  #1a2a20;
+  --border-default: #223828;
+  --border-hover:   #2d5040;
+  --border-active:  #3d6e54;
+  --border-focus:   #3dd9a0;
+
+  --text-primary:   #e0ede6;
+  --text-secondary: #88a896;
+  --text-tertiary:  #5a8070;
+  --text-muted:     #6a9080;
+  --text-inverse:   #080d0a;
+
+  --augur-blue:     #3dd9a0;
+  --augur-blue-dim: rgba(61, 217, 160, 0.15);
+  --augur-logo:     #ffffff;
+}
+
+[data-theme="dusk"] {
+  --bg-root:           #0c0a14;
+  --bg-surface:        #100e1a;
+  --bg-elevated:       #171422;
+  --bg-card:           #1c1828;
+  --bg-card-hover:     #211e2e;
+  --bg-modal:          #141220;
+  --bg-modal-overlay:  rgba(0, 0, 0, 0.75);
+  --bg-sidebar:        #0e0c18;
+  --bg-sidebar-active: rgba(168, 122, 255, 0.12);
+  --bg-input:          #130f1c;
+
+  --border-subtle:  #221e30;
+  --border-default: #2c2840;
+  --border-hover:   #3c3858;
+  --border-active:  #524e78;
+  --border-focus:   #a87aff;
+
+  --text-primary:   #ece8f8;
+  --text-secondary: #9088b0;
+  --text-tertiary:  #7a708e;
+  --text-muted:     #8a80b0;
+  --text-inverse:   #0c0a14;
+
+  --augur-blue:     #a87aff;
+  --augur-blue-dim: rgba(168, 122, 255, 0.15);
+  --augur-logo:     #ffffff;
+}
+
+[data-theme="terminal"] {
+  --bg-root:           #000000;
+  --bg-surface:        #050505;
+  --bg-elevated:       #0a0a0a;
+  --bg-card:           #0f0f0f;
+  --bg-card-hover:     #141414;
+  --bg-modal:          #080808;
+  --bg-modal-overlay:  rgba(0, 0, 0, 0.88);
+  --bg-sidebar:        #000000;
+  --bg-sidebar-active: rgba(0, 255, 65, 0.08);
+  --bg-input:          #080808;
+
+  --border-subtle:  #141414;
+  --border-default: #1a2a1a;
+  --border-hover:   #224422;
+  --border-active:  #2a6a2a;
+  --border-focus:   #00ff41;
+
+  --text-primary:   #00ff41;
+  --text-secondary: #00cc33;
+  --text-tertiary:  #009926;
+  --text-muted:     #009030;
+  --text-inverse:   #000000;
+
+  --augur-blue:     #00ff41;
+  --augur-blue-dim: rgba(0, 255, 65, 0.10);
+  --augur-logo:     #00ff41;
+}

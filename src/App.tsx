@@ -6,6 +6,9 @@ import { StatsModal } from './components/stats/StatsModal/StatsModal';
 import { Toast } from './components/common/Toast/Toast';
 import { AppLayout } from './components/layout/AppLayout/AppLayout';
 import { Sidebar } from './components/layout/Sidebar/Sidebar';
+import type { AppView } from './components/layout/Sidebar/Sidebar';
+import { SettingsView } from './components/settings/SettingsView/SettingsView';
+import { useTheme } from './hooks/useTheme';
 import { Pagination } from './components/pagination/Pagination/Pagination';
 import { StatsRow } from './components/stats/StatsRow/StatsRow';
 import { IndicatorTable } from './components/table/IndicatorTable/IndicatorTable';
@@ -28,6 +31,8 @@ function App() {
   const [allPagesSelected, setAllPagesSelected] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
+  const [view, setView] = useState<AppView>('dashboard');
+  const { theme, setTheme } = useTheme();
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [localIndicators, setLocalIndicators] = useState<Indicator[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -118,77 +123,83 @@ function App() {
 
   return (
     <>
-    <AppLayout sidebar={<Sidebar />}>
-      <PageHeader onExport={handleExport} secondsLeft={secondsLeft} onAddIndicator={() => setAddModalOpen(true)} />
-      <StatsRow
-        stats={stats}
-        loading={statsLoading}
-        onViewStats={() => setStatsModalOpen(true)}
-        onFilterBySeverity={setSeverity}
-      />
-      <Toolbar
-        search={filters.search ?? ''}
-        severity={filters.severity}
-        type={filters.type}
-        source={filters.source}
-        tags={filters.tags ?? []}
-        availableTags={availableTags}
-        onSearchChange={setSearch}
-        onSeverityChange={setSeverity}
-        onTypeChange={setType}
-        onSourceChange={setSource}
-        onTagsChange={setTags}
-        onClear={reset}
-        hasActiveFilters={hasActiveFilters}
-      />
-      {showSelectionBar && (
-        <SelectionBar
-          count={allPagesSelected ? total : checkedIndicators.size}
-          total={total}
-          allOnPageSelected={allOnPageSelected}
-          allPagesSelected={allPagesSelected}
-          onExport={handleExport}
-          onClear={handleClearSelection}
-          onSelectAllPages={handleSelectAllPages}
-        />
-      )}
-      <div className={styles.contentRow}>
-        <div className={styles.tableArea}>
-          <IndicatorTable
-            indicators={displayIndicators}
-            loading={indicatorsLoading}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-            hasFilters={hasActiveFilters}
-            checkedIds={checkedIds}
-            onToggleCheck={handleToggleCheck}
-            onToggleAll={handleToggleAll}
-            sort={sort}
-            onSort={toggleSort}
-          />
-          <Pagination
-            page={filters.page ?? 1}
-            totalPages={totalPages}
-            total={total}
-            limit={filters.limit ?? 20}
-            onPageChange={setPage}
-            onLimitChange={setLimit}
-          />
-        </div>
-        {selectedId && (
-          <DetailPanel id={selectedId} onClose={() => setSelectedId(null)} />
+      <AppLayout sidebar={<Sidebar activeView={view} onNavigate={setView} />}>
+        {view === 'settings' ? (
+          <SettingsView theme={theme} onThemeChange={setTheme} />
+        ) : (
+          <>
+            <PageHeader onExport={handleExport} secondsLeft={secondsLeft} onAddIndicator={() => setAddModalOpen(true)} />
+            <StatsRow
+              stats={stats}
+              loading={statsLoading}
+              onViewStats={() => setStatsModalOpen(true)}
+              onFilterBySeverity={setSeverity}
+            />
+            <Toolbar
+              search={filters.search ?? ''}
+              severity={filters.severity}
+              type={filters.type}
+              source={filters.source}
+              tags={filters.tags ?? []}
+              availableTags={availableTags}
+              onSearchChange={setSearch}
+              onSeverityChange={setSeverity}
+              onTypeChange={setType}
+              onSourceChange={setSource}
+              onTagsChange={setTags}
+              onClear={reset}
+              hasActiveFilters={hasActiveFilters}
+            />
+            {showSelectionBar && (
+              <SelectionBar
+                count={allPagesSelected ? total : checkedIndicators.size}
+                total={total}
+                allOnPageSelected={allOnPageSelected}
+                allPagesSelected={allPagesSelected}
+                onExport={handleExport}
+                onClear={handleClearSelection}
+                onSelectAllPages={handleSelectAllPages}
+              />
+            )}
+            <div className={styles.contentRow}>
+              <div className={styles.tableArea}>
+                <IndicatorTable
+                  indicators={displayIndicators}
+                  loading={indicatorsLoading}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                  hasFilters={hasActiveFilters}
+                  checkedIds={checkedIds}
+                  onToggleCheck={handleToggleCheck}
+                  onToggleAll={handleToggleAll}
+                  sort={sort}
+                  onSort={toggleSort}
+                />
+                <Pagination
+                  page={filters.page ?? 1}
+                  totalPages={totalPages}
+                  total={total}
+                  limit={filters.limit ?? 20}
+                  onPageChange={setPage}
+                  onLimitChange={setLimit}
+                />
+              </div>
+              {selectedId && (
+                <DetailPanel id={selectedId} onClose={() => setSelectedId(null)} />
+              )}
+            </div>
+          </>
         )}
-      </div>
-    </AppLayout>
-    {statsModalOpen && stats !== null && (
-      <StatsModal stats={stats} onClose={() => setStatsModalOpen(false)} />
-    )}
-    {addModalOpen && (
-      <AddIndicatorModal onClose={() => setAddModalOpen(false)} onAdd={handleAddIndicator} />
-    )}
-    {toast !== null && (
-      <Toast message={toast} onDismiss={() => setToast(null)} />
-    )}
+      </AppLayout>
+      {statsModalOpen && stats !== null && (
+        <StatsModal stats={stats} onClose={() => setStatsModalOpen(false)} />
+      )}
+      {addModalOpen && (
+        <AddIndicatorModal onClose={() => setAddModalOpen(false)} onAdd={handleAddIndicator} />
+      )}
+      {toast !== null && (
+        <Toast message={toast} onDismiss={() => setToast(null)} />
+      )}
     </>
   );
 }

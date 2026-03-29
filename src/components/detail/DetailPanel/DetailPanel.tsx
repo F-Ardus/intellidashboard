@@ -109,8 +109,23 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
         </div>
 
         <div className={styles.actions}>
-          <Button className={styles.actionBtn} variant="secondary" size="sm">Investigate</Button>
-          <Button className={styles.actionBtn} variant="danger" size="sm">Block</Button>
+          <Button
+            className={styles.actionBtn}
+            variant="secondary"
+            size="sm"
+            onClick={() => window.open(`https://www.virustotal.com/gui/search/${encodeURIComponent(indicator.value)}`, '_blank', 'noopener,noreferrer')}
+          >
+            Investigate
+          </Button>
+          <Button
+            className={styles.actionBtn}
+            variant="danger"
+            size="sm"
+            disabled
+            title="Requires SIEM/firewall integration"
+          >
+            Block
+          </Button>
         </div>
       </div>
     </div>
