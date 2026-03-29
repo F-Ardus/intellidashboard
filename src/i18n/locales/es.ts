@@ -151,4 +151,57 @@ export const es: Translations = {
   toast: {
     indicatorAdded: 'Indicador agregado exitosamente',
   },
+  tour: {
+    skip: 'Omitir',
+    finish: 'Finalizar',
+    steps: [
+      {
+        title: 'Bienvenido a Augur',
+        description:
+          'Un panel de inteligencia de amenazas para monitorear e investigar indicadores de compromiso. Este recorrido rápido cubre las funciones principales — omítelo en cualquier momento.',
+      },
+      {
+        title: 'Resumen de Amenazas',
+        description:
+          'Conteos en vivo por severidad. Haz clic en una tarjeta para filtrar la tabla, o en Total para ver un desglose detallado con gráfico de anillo.',
+      },
+      {
+        title: 'Feed en Vivo',
+        description:
+          'El panel se actualiza automáticamente cada 30 segundos. El anillo de cuenta regresiva muestra el tiempo hasta la próxima actualización. Los indicadores añadidos se borran con el siguiente refresco.',
+      },
+      {
+        title: 'Buscar Indicadores',
+        description:
+          'Búsqueda de texto completo en valores, fuentes y etiquetas. Los resultados se actualizan mientras escribes con un breve retardo para evitar solicitudes innecesarias.',
+      },
+      {
+        title: 'Filtrar y Refinar',
+        description:
+          'Filtra por severidad, tipo (IP, dominio, hash, URL), fuente o etiquetas. Los filtros se combinan: solo se muestran indicadores que cumplen todas las condiciones.',
+      },
+      {
+        title: 'Búsquedas Guardadas',
+        description:
+          'Guarda cualquier combinación de filtros como un preset con nombre. Los presets persisten entre sesiones y se aplican con un clic o se eliminan desde este menú.',
+      },
+      {
+        title: 'Tabla de Indicadores',
+        description:
+          'Haz clic en una fila para ver el panel detallado con metadatos, línea de tiempo y acciones. Pasa el cursor para copiar el valor. Usa casillas para selección múltiple y exportar CSV. Los encabezados de columna son ordenables.',
+      },
+      {
+        title: 'Navegar Resultados',
+        description:
+          'Navega por los resultados y ajusta cuántas filas se muestran. Los filtros activos se reflejan en la URL para compartir vistas filtradas.',
+      },
+      {
+        title: 'Configuración',
+        description:
+          'Personaliza el panel: elige un tema, cambia el idioma (inglés, español, japonés) y ajusta la densidad de la tabla y preferencias de etiquetas.',
+        fallbackDescription:
+          'Toca el menú para abrir la barra lateral, luego ve a Configuración para personalizar tu tema, idioma y preferencias de tabla.',
+      },
+    ],
+  },
 };

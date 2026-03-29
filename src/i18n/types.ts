@@ -149,4 +149,13 @@ export interface Translations {
   toast: {
     indicatorAdded: string;
   };
+  tour: {
+    skip: string;
+    finish: string;
+    steps: Array<{
+      title: string;
+      description: string;
+      fallbackDescription?: string;
+    }>;
+  };
 }

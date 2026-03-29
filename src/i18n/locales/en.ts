@@ -151,4 +151,57 @@ export const en: Translations = {
   toast: {
     indicatorAdded: 'Indicator added successfully',
   },
+  tour: {
+    skip: 'Skip tour',
+    finish: 'Finish',
+    steps: [
+      {
+        title: 'Welcome to Augur',
+        description:
+          'A threat intelligence dashboard for monitoring and investigating indicators of compromise. This quick tour covers the key features — skip any time.',
+      },
+      {
+        title: 'Threat Summary',
+        description:
+          'Live counts broken down by severity. Click any card to filter the table to that severity, or the Total card to open a detailed breakdown with a donut chart.',
+      },
+      {
+        title: 'Live Feed',
+        description:
+          'The dashboard auto-refreshes every 30 seconds. The countdown ring shows time until the next update. Note: indicators added via the form are optimistic — they will be cleared on the next refresh.',
+      },
+      {
+        title: 'Search Indicators',
+        description:
+          'Full-text search across indicator values, sources, and tags. Results update as you type with a short debounce to avoid unnecessary requests.',
+      },
+      {
+        title: 'Filter & Refine',
+        description:
+          'Narrow results by severity, type (IP, domain, hash, URL), source feed, or tags. Multiple filters combine — only indicators matching all conditions are shown.',
+      },
+      {
+        title: 'Saved Searches',
+        description:
+          'Save any filter combination as a named preset. Presets persist across sessions and can be applied in one click or deleted from this dropdown.',
+      },
+      {
+        title: 'Indicator Table',
+        description:
+          'Click any row to open a detailed side panel with full metadata, timeline, and actions. Hover a row to reveal a copy-to-clipboard button on the indicator value. Use checkboxes for multi-select and bulk CSV export. Column headers are sortable.',
+      },
+      {
+        title: 'Navigate Results',
+        description:
+          'Page through results and adjust how many rows are shown. Active filters are reflected in the URL — making filtered views bookmarkable and shareable.',
+      },
+      {
+        title: 'Settings',
+        description:
+          'Customise the dashboard: choose a theme (system, midnight, dusk, or light), switch language (English, Spanish, Japanese), and adjust table density and tag display preferences.',
+        fallbackDescription:
+          'Tap the menu button to open the sidebar, then go to Settings to customise your theme, language, table density, and tag display preferences.',
+      },
+    ],
+  },
 };

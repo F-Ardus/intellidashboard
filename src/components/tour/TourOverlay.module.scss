@@ -54,11 +54,55 @@
 // Re-run the animation when the step changes by keying the step into a class name
 // (handled via unique step index applied externally if needed)
 
+.tooltipTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .title {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
+  flex: 1;
+}
+
+.langDropdown {
+  position: relative;
+  flex-shrink: 0;
+
+  &::after {
+    content: '▾';
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 9px;
+    color: var(--text-tertiary);
+    line-height: 1;
+  }
+}
+
+.langSelect {
+  appearance: none;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 3px 20px 3px 6px;
+  cursor: pointer;
+  line-height: 1.4;
+
+  &:focus-visible {
+    outline: 2px solid var(--augur-blue);
+    outline-offset: 2px;
+  }
 }
 
 .desc {

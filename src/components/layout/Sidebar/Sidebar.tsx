@@ -83,7 +83,7 @@ export function Sidebar({ activeView, onNavigate }: SidebarProps) {
   const NAV_SECTIONS: Array<{ label?: string; items: NavItem[] }> = [
     {
       items: [
-        { key: 'dashboard', label: t.nav.dashboard, icon: <GridIcon />, badge: '3', onClick: () => onNavigate('dashboard') },
+        { key: 'dashboard', label: t.nav.dashboard, icon: <GridIcon />, onClick: () => onNavigate('dashboard') },
         { key: 'augurEvents', label: t.nav.augurEvents, icon: <LayersIcon /> },
         { key: 'investigate', label: t.nav.investigate, icon: <SearchIcon /> },
       ],

@@ -1,5 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 import type { TourStep } from '../../hooks/useTour';
+import { useT } from '../../contexts/LocaleContext';
+import { LOCALES } from '../../i18n';
 import styles from './TourOverlay.module.scss';
 
 const PAD      = 8;   // px padding around highlighted element
@@ -73,35 +75,28 @@ function resolveElement(target: string, fallback?: string): Element | null {
 }
 
 export function TourOverlay({ steps, step, total, onNext, onPrev, onSkip }: Props) {
+  const { t, locale, setLocale } = useT();
   const current = steps[step] ?? steps[0]!;
   const [rect, setRect] = useState<SpotRect | null>(null);
-  // resolved placement and description are stored in state so they update
-  // atomically with the rect — no one-render lag from a separate flag.
   const [resolvedPlacement, setResolvedPlacement] = useState<TourStep['placement']>(current.placement ?? 'bottom');
-  const [resolvedDesc, setResolvedDesc] = useState(current.description);
+  const [isFallback, setIsFallback] = useState(false);
   const isLast = step === total - 1;
 
   useLayoutEffect(() => {
     if (!current.target) {
       setRect(null);
       setResolvedPlacement(current.placement ?? 'center');
-      setResolvedDesc(current.description);
+      setIsFallback(false);
       return;
     }
 
-    // Instant scroll so getBoundingClientRect is accurate immediately after.
     const el = resolveElement(current.target, current.fallbackTarget);
-    const isFallback = !!el && el !== document.querySelector(current.target);
-
+    const fb = !!el && el !== document.querySelector(current.target);
+    setIsFallback(fb);
     setResolvedPlacement(
-      isFallback && current.fallbackPlacement
+      fb && current.fallbackPlacement
         ? current.fallbackPlacement
         : (current.placement ?? 'bottom'),
-    );
-    setResolvedDesc(
-      isFallback && current.fallbackDescription
-        ? current.fallbackDescription
-        : current.description,
     );
 
     if (!el) { setRect(null); return; }
@@ -114,8 +109,13 @@ export function TourOverlay({ steps, step, total, onNext, onPrev, onSkip }: Prop
       width:  r.width  + PAD * 2,
       height: r.height + PAD * 2,
     });
-  }, [step, current.target, current.fallbackTarget, current.placement, current.fallbackPlacement,
-      current.description, current.fallbackDescription]);
+  }, [step, current.target, current.fallbackTarget, current.placement, current.fallbackPlacement]);
+
+  const tourStep = t.tour.steps[step];
+  const displayTitle = tourStep?.title ?? current.title;
+  const displayDesc = isFallback && tourStep?.fallbackDescription
+    ? tourStep.fallbackDescription
+    : (tourStep?.description ?? current.description);
 
   const tooltipStyle = computeTooltipStyle(rect, resolvedPlacement);
 
@@ -136,10 +136,24 @@ export function TourOverlay({ steps, step, total, onNext, onPrev, onSkip }: Prop
 
       {/* Tooltip */}
       <div className={styles.tooltip} style={tooltipStyle}>
-        <p className={styles.title}>{current.title}</p>
-        <p className={styles.desc}>{resolvedDesc}</p>
+        <div className={styles.tooltipTop}>
+          <p className={styles.title}>{displayTitle}</p>
+          <div className={styles.langDropdown}>
+            <select
+              className={styles.langSelect}
+              value={locale}
+              onChange={(e) => setLocale(e.target.value as typeof locale)}
+              aria-label="Language"
+            >
+              {LOCALES.map((l) => (
+                <option key={l.id} value={l.id}>{l.flag}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <p className={styles.desc}>{displayDesc}</p>
         <div className={styles.footer}>
-          <button className={styles.skipBtn} onClick={onSkip}>Skip tour</button>
+          <button className={styles.skipBtn} onClick={onSkip}>{t.tour.skip}</button>
           <div className={styles.actions}>
             <button
               className={styles.chevronBtn}
@@ -149,7 +163,7 @@ export function TourOverlay({ steps, step, total, onNext, onPrev, onSkip }: Prop
             >‹</button>
             <span className={styles.counter}>{step + 1} / {total}</span>
             {isLast ? (
-              <button className={styles.nextBtn} onClick={onNext}>Finish</button>
+              <button className={styles.nextBtn} onClick={onNext}>{t.tour.finish}</button>
             ) : (
               <button
                 className={styles.chevronBtn}
