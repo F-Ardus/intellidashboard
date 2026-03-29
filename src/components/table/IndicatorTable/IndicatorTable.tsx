@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { SortField, SortState } from '../../../hooks/useSort';
 import type { Indicator } from '../../../types/indicator';
+import type { RowDensity } from '../../../hooks/useTablePrefs';
 import { useT } from '../../../contexts/LocaleContext';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { IndicatorRow } from '../IndicatorRow/IndicatorRow';
@@ -20,6 +21,8 @@ interface IndicatorTableProps {
   onToggleAll: () => void;
   sort: SortState;
   onSort: (field: SortField) => void;
+  density: RowDensity;
+  expandTags: boolean;
 }
 
 interface SortableThProps {
@@ -61,6 +64,8 @@ export function IndicatorTable({
   onToggleAll,
   sort,
   onSort,
+  density,
+  expandTags,
 }: IndicatorTableProps) {
   const { t } = useT();
   const allChecked = indicators.length > 0 && indicators.every((i) => checkedIds.has(i.id));
@@ -73,9 +78,12 @@ export function IndicatorTable({
     }
   }, [someChecked]);
 
+  const densityClass = density === 'compact' ? styles.densityCompact : density === 'comfortable' ? styles.densityComfortable : styles.densityNormal;
+
   return (
     <div className={styles.container}>
-      <table className={styles.table}>
+    <div className={styles.scrollArea}>
+      <table className={`${styles.table} ${densityClass}`}>
         <thead>
           <tr>
             <th className={`${styles.th} ${styles.thCheck}`}>
@@ -87,7 +95,7 @@ export function IndicatorTable({
                 aria-label="Select all"
               />
             </th>
-            <SortableTh field="value" sort={sort} onSort={onSort} className={styles.thIndicator}>{t.table.indicator}</SortableTh>
+            <SortableTh field="value" sort={sort} onSort={onSort}>{t.table.indicator}</SortableTh>
             <SortableTh field="type" sort={sort} onSort={onSort}>{t.table.type}</SortableTh>
             <SortableTh field="severity" sort={sort} onSort={onSort}>{t.table.severity}</SortableTh>
             <SortableTh field="source" sort={sort} onSort={onSort}>{t.table.source}</SortableTh>
@@ -110,11 +118,13 @@ export function IndicatorTable({
                 onSelect={onSelect}
                 isChecked={checkedIds.has(indicator.id)}
                 onToggleCheck={onToggleCheck}
+                expandTags={expandTags}
               />
             ))
           )}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

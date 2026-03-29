@@ -1,37 +1,29 @@
 .container {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow: hidden; /* enforces border-radius clipping on table edges */
   margin: var(--sp-4) var(--sp-8);
 }
 
-@media (max-width: 768px) {
+/* Inner scroll wrapper — sits inside overflow:hidden so rounded corners are preserved */
+.scrollArea {
+  overflow-x: auto;
+}
+
+@media (max-width: 1100px) {
   .container {
     margin: var(--sp-3) var(--sp-4);
-    overflow-x: auto;
   }
-
-  .table {
-    /* sum of all column widths below: 40+180+72+84+130+110+88+110 = 814px */
-    min-width: 814px;
-    table-layout: fixed;
-  }
-
-  .thIndicator { width: 180px; }
-
-  .table thead tr th:nth-child(1) { width: 40px;  } /* checkbox   */
-  .table thead tr th:nth-child(3) { width: 72px;  } /* type       */
-  .table thead tr th:nth-child(4) { width: 84px;  } /* severity   */
-  .table thead tr th:nth-child(5) { width: 130px; } /* source     */
-  .table thead tr th:nth-child(6) { width: 110px; } /* confidence */
-  .table thead tr th:nth-child(7) { width: 88px;  } /* last seen  */
-  .table thead tr th:nth-child(8) { width: 110px; } /* tags       */
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
 }
+
+.densityCompact    { --row-pad-v: 6px; }
+.densityNormal     { --row-pad-v: 12px; }
+.densityComfortable { --row-pad-v: 18px; }
 
 .th {
   background: var(--bg-elevated);
@@ -47,7 +39,7 @@
 }
 
 .thCheck {
-  width: 40px;
+  width: 36px;
   padding-right: 0;
 }
 

@@ -13,20 +13,68 @@
 }
 
 .cell {
-  padding: var(--sp-3) var(--sp-4);
+  padding: var(--row-pad-v, var(--sp-3)) var(--sp-4);
   font-size: 13px;
   vertical-align: middle;
 }
 
+/* ── Indicator cell with copy button ── */
+
+.indicatorCell {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
 .indicator {
-  display: block;
   font-family: var(--font-mono);
   font-size: 12.5px;
   font-weight: 500;
   color: var(--augur-blue);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.copyBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s ease, color 0.12s ease, background 0.12s ease;
+
+  .row:hover & {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: var(--augur-blue);
+    background: var(--augur-blue-dim);
+    border-color: var(--augur-blue);
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--augur-blue);
+    outline-offset: 2px;
+  }
+}
+
+.copyBtnDone {
+  color: var(--severity-low) !important;
+  background: color-mix(in srgb, var(--severity-low) 12%, transparent) !important;
+  border-color: var(--severity-low) !important;
+  opacity: 1 !important;
 }
 
 .typeCell {
@@ -52,7 +100,7 @@
 
 .tags {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 4px;
   align-items: center;
 }
@@ -68,4 +116,9 @@
 .checkCell {
   width: 40px;
   padding-right: 0;
+}
+
+/* Prevents cell content from bleeding outside fixed-width columns */
+.cellClip {
+  overflow: hidden;
 }

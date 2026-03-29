@@ -42,6 +42,11 @@ export interface Translations {
     noMoreTags: string;
     severity: { critical: string; high: string; medium: string; low: string };
     type: { ip: string; domain: string; hash: string; url: string };
+    presets: string;
+    savePreset: string;
+    savePresetPlaceholder: string;
+    noPresets: string;
+    deletePreset: string;
   };
   table: {
     indicator: string;
@@ -126,10 +131,20 @@ export interface Translations {
     title: string;
     subtitle: string;
     appearance: string;
+    systemTheme: string;
+    systemThemeDesc: string;
     theme: string;
     themeDesc: string;
     language: string;
     languageDesc: string;
+    tableSection: string;
+    density: string;
+    densityDesc: string;
+    densityCompact: string;
+    densityNormal: string;
+    densityComfortable: string;
+    expandTags: string;
+    expandTagsDesc: string;
   };
   toast: {
     indicatorAdded: string;

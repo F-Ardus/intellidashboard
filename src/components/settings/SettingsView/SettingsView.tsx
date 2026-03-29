@@ -4,11 +4,15 @@ import { THEMES } from '../../../hooks/useTheme';
 import { LOCALES } from '../../../i18n';
 import type { LocaleId } from '../../../i18n';
 import { useT } from '../../../contexts/LocaleContext';
+import type { RowDensity, TablePrefs } from '../../../hooks/useTablePrefs';
 import styles from './SettingsView.module.scss';
 
 interface SettingsViewProps {
   theme: ThemeId;
   onThemeChange: (id: ThemeId) => void;
+  tablePrefs: TablePrefs;
+  onDensityChange: (d: RowDensity) => void;
+  onExpandTagsChange: (v: boolean) => void;
 }
 
 function LocaleDropdown({ locale, setLocale }: { locale: LocaleId; setLocale: (id: LocaleId) => void }) {
@@ -57,7 +61,13 @@ function LocaleDropdown({ locale, setLocale }: { locale: LocaleId; setLocale: (i
   );
 }
 
-export function SettingsView({ theme, onThemeChange }: SettingsViewProps) {
+const DENSITY_OPTIONS: Array<{ value: RowDensity; labelKey: 'densityCompact' | 'densityNormal' | 'densityComfortable' }> = [
+  { value: 'compact', labelKey: 'densityCompact' },
+  { value: 'normal', labelKey: 'densityNormal' },
+  { value: 'comfortable', labelKey: 'densityComfortable' },
+];
+
+export function SettingsView({ theme, onThemeChange, tablePrefs, onDensityChange, onExpandTagsChange }: SettingsViewProps) {
   const { t, locale, setLocale } = useT();
 
   return (
@@ -70,29 +80,54 @@ export function SettingsView({ theme, onThemeChange }: SettingsViewProps) {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>{t.settings.appearance}</h2>
 
-        {/* Theme row */}
-        <div className={styles.row}>
+        {/* System theme toggle */}
+        <div className={`${styles.row} ${theme !== 'system' ? '' : styles.rowLast} ${styles.rowCenter}`}>
           <div className={styles.rowLabel}>
-            <span className={styles.optionTitle}>{t.settings.theme}</span>
-            <span className={styles.optionDesc}>{t.settings.themeDesc}</span>
+            <span className={styles.optionTitle}>{t.settings.systemTheme}</span>
+            <span className={styles.optionDesc}>{t.settings.systemThemeDesc}</span>
           </div>
-          <div className={styles.themeGrid}>
-            {THEMES.map((th) => (
-              <button
-                key={th.id}
-                className={`${styles.themeCard} ${theme === th.id ? styles.themeCardActive : ''}`}
-                onClick={() => onThemeChange(th.id)}
-                aria-pressed={theme === th.id}
-                aria-label={`${th.name}${theme === th.id ? ' (active)' : ''}`}
-              >
-                <div className={styles.themePreview}>
-                  <img src={`/themes/${th.id}.png`} alt="" aria-hidden="true" />
-                </div>
-                <span className={styles.themeName}>{th.name}</span>
-              </button>
-            ))}
-          </div>
+          <button
+            role="switch"
+            aria-checked={theme === 'system'}
+            className={`${styles.toggle} ${theme === 'system' ? styles.toggleOn : ''}`}
+            onClick={() => {
+              if (theme === 'system') {
+                const resolved = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'midnight';
+                onThemeChange(resolved as ThemeId);
+              } else {
+                onThemeChange('system');
+              }
+            }}
+          >
+            <span className={styles.toggleThumb} />
+          </button>
         </div>
+
+        {/* Manual theme picker — only when system theme is off */}
+        {theme !== 'system' && (
+          <div className={`${styles.row} ${styles.rowLast} ${styles.rowAnimate}`}>
+            <div className={styles.rowLabel}>
+              <span className={styles.optionTitle}>{t.settings.theme}</span>
+              <span className={styles.optionDesc}>{t.settings.themeDesc}</span>
+            </div>
+            <div className={styles.themeGrid}>
+              {THEMES.filter((th) => th.id !== 'system').map((th) => (
+                <button
+                  key={th.id}
+                  className={`${styles.themeCard} ${theme === th.id ? styles.themeCardActive : ''}`}
+                  onClick={() => onThemeChange(th.id)}
+                  aria-pressed={theme === th.id}
+                  aria-label={`${th.name}${theme === th.id ? ' (active)' : ''}`}
+                >
+                  <div className={styles.themePreview}>
+                    <img src={`/themes/${th.id}.png`} alt="" aria-hidden="true" />
+                  </div>
+                  <span className={styles.themeName}>{th.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Language row */}
         <div className={`${styles.row} ${styles.rowLast}`}>
@@ -101,6 +136,46 @@ export function SettingsView({ theme, onThemeChange }: SettingsViewProps) {
             <span className={styles.optionDesc}>{t.settings.languageDesc}</span>
           </div>
           <LocaleDropdown locale={locale} setLocale={setLocale} />
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>{t.settings.tableSection}</h2>
+
+        {/* Row density */}
+        <div className={styles.row}>
+          <div className={styles.rowLabel}>
+            <span className={styles.optionTitle}>{t.settings.density}</span>
+            <span className={styles.optionDesc}>{t.settings.densityDesc}</span>
+          </div>
+          <div className={styles.segmentGroup} role="group" aria-label={t.settings.density}>
+            {DENSITY_OPTIONS.map(({ value, labelKey }) => (
+              <button
+                key={value}
+                className={`${styles.segmentBtn} ${tablePrefs.density === value ? styles.segmentBtnActive : ''}`}
+                onClick={() => onDensityChange(value)}
+                aria-pressed={tablePrefs.density === value}
+              >
+                {t.settings[labelKey]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Expand tags */}
+        <div className={`${styles.row} ${styles.rowLast} ${styles.rowCenter}`}>
+          <div className={styles.rowLabel}>
+            <span className={styles.optionTitle}>{t.settings.expandTags}</span>
+            <span className={styles.optionDesc}>{t.settings.expandTagsDesc}</span>
+          </div>
+          <button
+            role="switch"
+            aria-checked={tablePrefs.expandTags}
+            className={`${styles.toggle} ${tablePrefs.expandTags ? styles.toggleOn : ''}`}
+            onClick={() => onExpandTagsChange(!tablePrefs.expandTags)}
+          >
+            <span className={styles.toggleThumb} />
+          </button>
         </div>
       </section>
     </div>

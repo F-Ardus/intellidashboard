@@ -49,7 +49,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
 
       <div className={styles.controls}>
         <button
-          className={styles.btn}
+          className={`${styles.btn} ${styles.arrow}`}
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
           aria-label={t.pagination.previousPage}
@@ -74,7 +74,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
         )}
 
         <button
-          className={styles.btn}
+          className={`${styles.btn} ${styles.arrow}`}
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
           aria-label={t.pagination.nextPage}

@@ -33,6 +33,29 @@
   --augur-blue-dim: rgba(64, 96, 224, 0.12);
   --augur-logo:     #ffffff;
 
+  /* Tags: dark theme uses pale tints on dark bg; light theme needs richer bg + dark text */
+  --tag-red:           #ffe0e3;
+  --tag-red-text:      #c0152a;
+  --tag-red-border:    #f5a0a8;
+  --tag-blue:          #dde5ff;
+  --tag-blue-text:     #2a44c0;
+  --tag-blue-border:   #a0b4f0;
+  --tag-purple:        #ece0ff;
+  --tag-purple-text:   #6428c8;
+  --tag-purple-border: #c4a0f0;
+  --tag-teal:          #d0f7f2;
+  --tag-teal-text:     #0e7a6a;
+  --tag-teal-border:   #80ddd0;
+  --tag-gray:          #e8eaf0;
+  --tag-gray-text:     #3a3f52;
+  --tag-gray-border:   #c0c4d4;
+
+  /* Sidebar sits on dark navy (#1e2235) — needs lighter text than the content area.
+     Hover uses --bg-card (#ffffff) so hover text must be dark. */
+  --text-sidebar:        #a0a8c0;
+  --text-sidebar-hover:  #1a1d26;
+  --text-sidebar-active: #7a9fff;
+
   --shadow-card:    0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-subtle);
   --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--border-subtle);
   --shadow-modal:   0 12px 48px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--border-default);

@@ -8,6 +8,211 @@
   flex-wrap: wrap;
 }
 
+/* ── Presets slot (far right) ── */
+
+.presetsSlot {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.presetsWrap {
+  position: relative;
+}
+
+.presetsTrigger {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 6px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--augur-blue);
+    outline-offset: 2px;
+  }
+}
+
+.presetsTriggerOpen {
+  border-color: var(--augur-blue);
+  color: var(--augur-blue);
+  box-shadow: 0 0 0 2px var(--augur-blue-dim);
+}
+
+.presetsTriggerActive {
+  color: var(--augur-blue);
+  border-color: var(--augur-blue);
+  background: var(--augur-blue-dim);
+}
+
+.presetsCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--augur-blue);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.presetsCaret {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.presetsPanel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 240px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.presetsEmpty {
+  padding: var(--sp-4) var(--sp-4);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin: 0;
+}
+
+.presetsList {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-1) 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.presetsItem {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 0 var(--sp-2);
+
+  &:hover {
+    background: var(--bg-card-hover);
+  }
+}
+
+.presetsApply {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+  padding: 8px var(--sp-2);
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.presetsApplyActive {
+  color: var(--augur-blue);
+  font-weight: 600;
+}
+
+.presetsDelete {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+
+  &:hover {
+    color: var(--severity-critical);
+    background: color-mix(in srgb, var(--severity-critical) 10%, transparent);
+  }
+}
+
+.presetsSaveRow {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+}
+
+.presetsSaveInput {
+  flex: 1;
+  padding: 6px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  min-width: 0;
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--augur-blue);
+    box-shadow: 0 0 0 2px var(--augur-blue-dim);
+  }
+}
+
+.presetsSaveBtn {
+  padding: 6px 10px;
+  background: var(--augur-blue);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.88;
+  }
+}
+
 @media (max-width: 768px) {
   .toolbar {
     padding: var(--sp-3) var(--sp-4);

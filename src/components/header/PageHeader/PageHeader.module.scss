@@ -38,6 +38,7 @@
 @media (max-width: 768px) {
   .header {
     padding: var(--sp-4) var(--sp-4);
+    position: static; /* don't stick on mobile — overlaps the mobile topbar */
   }
 }
 

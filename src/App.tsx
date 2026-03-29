@@ -10,6 +10,8 @@ import type { AppView } from './components/layout/Sidebar/Sidebar';
 import { SettingsView } from './components/settings/SettingsView/SettingsView';
 import { useTheme } from './hooks/useTheme';
 import { useLocale } from './hooks/useLocale';
+import { useTablePrefs } from './hooks/useTablePrefs';
+import { useFilterPresets } from './hooks/useFilterPresets';
 import { fmt } from './i18n';
 import { LocaleContext } from './contexts/LocaleContext';
 import { Pagination } from './components/pagination/Pagination/Pagination';
@@ -35,8 +37,17 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [view, setView] = useState<AppView>('dashboard');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  const handleNavigate = useCallback((v: AppView) => {
+    setView(v);
+    setMobileNavOpen(false);
+  }, []);
   const { theme, setTheme } = useTheme();
   const { locale, setLocale, translations: t, intlLocale } = useLocale();
+  const { prefs: tablePrefs, setDensity, setExpandTags } = useTablePrefs();
+  const { presets, savePreset, deletePreset } = useFilterPresets();
+  const [activePresetId, setActivePresetId] = useState<string | null>(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [localIndicators, setLocalIndicators] = useState<Indicator[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -128,9 +139,20 @@ function App() {
   return (
     <LocaleContext.Provider value={{ locale, setLocale, t, fmt, intlLocale }}>
       <>
-      <AppLayout sidebar={<Sidebar activeView={view} onNavigate={setView} />}>
+      <AppLayout
+        sidebar={<Sidebar activeView={view} onNavigate={handleNavigate} />}
+        mobileNavOpen={mobileNavOpen}
+        onMobileNavOpen={() => setMobileNavOpen(true)}
+        onMobileNavClose={() => setMobileNavOpen(false)}
+      >
         {view === 'settings' ? (
-          <SettingsView theme={theme} onThemeChange={setTheme} />
+          <SettingsView
+            theme={theme}
+            onThemeChange={setTheme}
+            tablePrefs={tablePrefs}
+            onDensityChange={setDensity}
+            onExpandTagsChange={setExpandTags}
+          />
         ) : (
           <>
             <PageHeader onExport={handleExport} secondsLeft={secondsLeft} onAddIndicator={() => setAddModalOpen(true)} />
@@ -152,8 +174,21 @@ function App() {
               onTypeChange={setType}
               onSourceChange={setSource}
               onTagsChange={setTags}
-              onClear={reset}
               hasActiveFilters={hasActiveFilters}
+              presets={presets}
+              activePresetId={activePresetId}
+              onSavePreset={(name) => savePreset(name, filters)}
+              onApplyPreset={(preset) => {
+                reset();
+                setActivePresetId(preset.id);
+                if (preset.filters.search) setSearch(preset.filters.search);
+                if (preset.filters.severity) setSeverity(preset.filters.severity);
+                if (preset.filters.type) setType(preset.filters.type);
+                if (preset.filters.source) setSource(preset.filters.source);
+                if (preset.filters.tags) setTags(preset.filters.tags);
+              }}
+              onDeletePreset={(id) => { deletePreset(id); if (activePresetId === id) setActivePresetId(null); }}
+              onClear={() => { reset(); setActivePresetId(null); }}
             />
             {showSelectionBar && (
               <SelectionBar
@@ -179,6 +214,8 @@ function App() {
                   onToggleAll={handleToggleAll}
                   sort={sort}
                   onSort={toggleSort}
+                  density={tablePrefs.density}
+                  expandTags={tablePrefs.expandTags}
                 />
                 <Pagination
                   page={filters.page ?? 1}

@@ -28,6 +28,11 @@
   --text-muted: #7a8294;
   --text-inverse: #0a0c10;
 
+  // Sidebar text (separate from content area so light theme sidebar stays readable)
+  --text-sidebar: #8b90a0;
+  --text-sidebar-hover: #e8eaf0;
+  --text-sidebar-active: #6383ff;
+
   // Augur brand
   --augur-blue: #6383ff;
   --augur-blue-dim: rgba(99, 131, 255, 0.15);

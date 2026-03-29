@@ -71,6 +71,7 @@
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-secondary);
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -100,4 +101,9 @@
       background: transparent;
     }
   }
+}
+
+.arrow {
+  font-size: 16px;
+  font-weight: 400;
 }
