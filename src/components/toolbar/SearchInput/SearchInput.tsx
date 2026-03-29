@@ -34,10 +34,11 @@ export function SearchInput({
       </svg>
       <input
         className={styles.input}
-        type="text"
+        type="search"
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder={placeholder}
+        aria-label={placeholder ?? 'Search'}
       />
     </div>
   );

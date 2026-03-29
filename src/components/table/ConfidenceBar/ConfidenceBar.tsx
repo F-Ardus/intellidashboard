@@ -16,7 +16,14 @@ const SEVERITY_COLORS: Record<Severity, string> = {
 export function ConfidenceBar({ confidence, severity }: ConfidenceBarProps) {
   return (
     <div className={styles.wrapper}>
-      <div className={styles.track}>
+      <div
+        className={styles.track}
+        role="meter"
+        aria-valuenow={confidence}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Confidence: ${confidence}%`}
+      >
         <div
           className={styles.fill}
           style={{

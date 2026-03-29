@@ -35,6 +35,73 @@
   margin-right: var(--sp-2);
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.shortcutsWrap {
+  position: relative;
+  display: inline-flex;
+
+  &::after {
+    content: 'Keyboard shortcuts (?)';
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    white-space: nowrap;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: 4px 9px;
+    font-size: 11px;
+    font-family: var(--font-sans);
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-elevated);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 20;
+  }
+
+  &:hover::after,
+  &:focus-within::after {
+    opacity: 1;
+  }
+}
+
+.shortcutsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-default);
+  background: none;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: var(--augur-blue);
+    color: var(--augur-blue);
+    background: var(--augur-blue-dim);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--augur-blue);
+    outline-offset: 2px;
+    border-color: var(--augur-blue);
+    color: var(--augur-blue);
+  }
+}
+
 @media (max-width: 768px) {
   .header {
     padding: var(--sp-4) var(--sp-4);

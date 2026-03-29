@@ -32,8 +32,15 @@ export function TagFilter({ selected, availableTags, onChange }: TagFilterProps)
         setOpen(false);
       }
     }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
+    }
     document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onClickOutside);
+      document.removeEventListener('keydown', onKeyDown);
+    };
   }, [open]);
 
   function toggle(tag: string) {
@@ -57,13 +64,21 @@ export function TagFilter({ selected, availableTags, onChange }: TagFilterProps)
         className={`${styles.trigger} ${open ? styles.triggerOpen : ''} ${hasSelection ? styles.triggerActive : ''}`}
         onClick={() => setOpen((v) => !v)}
         type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={hasSelection ? `Tags: ${selected.join(', ')}` : t.toolbar.tagsPlaceholder}
       >
         {hasSelection ? (
           <span className={styles.selectedPills}>
             {selected.map((tag) => (
               <span key={tag} className={`${styles.chip} ${styles[tagColor(tag)]}`}>
                 {tag}
-                <span className={styles.chipRemove} onClick={(e) => remove(tag, e)}>×</span>
+                <button
+                  type="button"
+                  className={styles.chipRemove}
+                  onClick={(e) => remove(tag, e)}
+                  aria-label={`Remove ${tag}`}
+                >×</button>
               </span>
             ))}
           </span>
@@ -74,7 +89,7 @@ export function TagFilter({ selected, availableTags, onChange }: TagFilterProps)
       </button>
 
       {open && (
-        <div className={styles.dropdown}>
+        <div className={styles.dropdown} role="listbox" aria-label="Available tags" aria-multiselectable="true">
           <div className={styles.dropdownPills}>
             {availableTags.length === 0 && (
               <span className={styles.empty}>{t.toolbar.noMoreTags}</span>

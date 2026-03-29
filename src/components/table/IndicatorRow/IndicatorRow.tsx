@@ -37,10 +37,29 @@ export function IndicatorRow({
   const visibleTags = expandTags ? indicator.tags : indicator.tags.slice(0, 1);
   const hiddenCount = expandTags ? 0 : indicator.tags.length - 1;
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTableRowElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onSelect(indicator.id);
+    } else if (e.key === ' ') {
+      e.preventDefault();
+      onToggleCheck(indicator.id, indicator);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      (e.currentTarget.nextElementSibling as HTMLElement | null)?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      (e.currentTarget.previousElementSibling as HTMLElement | null)?.focus();
+    }
+  }
+
   return (
     <tr
       className={`${styles.row}${isSelected ? ` ${styles.selected}` : ''}`}
       onClick={() => onSelect(indicator.id)}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      aria-selected={isSelected}
     >
       <td className={`${styles.cell} ${styles.checkCell}`}>
         <input

@@ -18,6 +18,7 @@ export function FilterSelect({ value, onChange, options, placeholder }: FilterSe
       className={styles.select}
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      aria-label={placeholder}
     >
       <option value="">{placeholder}</option>
       {options.map((opt) => (

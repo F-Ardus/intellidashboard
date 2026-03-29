@@ -25,19 +25,19 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
 
   if (loading && !indicator) {
     return (
-      <div className={styles.panel}>
+      <aside className={styles.panel} role="complementary" aria-label={t.detail.title}>
         <div className={styles.header}>
           <span className={styles.title}>{t.detail.title}</span>
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close panel">✕</button>
         </div>
-      </div>
+      </aside>
     );
   }
 
   if (!indicator) return null;
 
   return (
-    <div className={styles.panel}>
+    <aside className={styles.panel} role="complementary" aria-label={t.detail.title}>
       <div className={styles.header}>
         <span className={styles.title}>{t.detail.title}</span>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close panel">✕</button>
@@ -130,6 +130,6 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
           </Button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }

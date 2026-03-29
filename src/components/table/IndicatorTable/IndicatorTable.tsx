@@ -38,11 +38,14 @@ function SortableTh({ field, sort, onSort, children, className }: SortableThProp
   const dir = active ? sort.dir : null;
 
   return (
-    <th className={`${styles.th} ${styles.thSortable}${className ? ` ${className}` : ''}`}>
+    <th
+      className={`${styles.th} ${styles.thSortable}${className ? ` ${className}` : ''}`}
+      scope="col"
+      aria-sort={dir === 'asc' ? 'ascending' : dir === 'desc' ? 'descending' : 'none'}
+    >
       <button
         className={`${styles.sortBtn} ${active ? styles.sortActive : ''}`}
         onClick={() => onSort(field)}
-        aria-sort={dir === 'asc' ? 'ascending' : dir === 'desc' ? 'descending' : 'none'}
       >
         {children}
         <span className={`${styles.caret} ${active ? styles.caretActive : ''}`}>
@@ -86,7 +89,7 @@ export function IndicatorTable({
       <table className={`${styles.table} ${densityClass}`}>
         <thead>
           <tr>
-            <th className={`${styles.th} ${styles.thCheck}`}>
+            <th className={`${styles.th} ${styles.thCheck}`} scope="col" aria-label="Row selection">
               <input
                 type="checkbox"
                 ref={headerCheckRef}
@@ -101,7 +104,7 @@ export function IndicatorTable({
             <SortableTh field="source" sort={sort} onSort={onSort}>{t.table.source}</SortableTh>
             <SortableTh field="confidence" sort={sort} onSort={onSort}>{t.table.confidence}</SortableTh>
             <SortableTh field="lastSeen" sort={sort} onSort={onSort}>{t.table.lastSeen}</SortableTh>
-            <th className={styles.th}>{t.table.tags}</th>
+            <th className={styles.th} scope="col">{t.table.tags}</th>
           </tr>
         </thead>
         <tbody>

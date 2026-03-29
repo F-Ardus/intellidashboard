@@ -31,7 +31,7 @@ export function useFilterPresets() {
   const [presets, setPresets] = useState<FilterPreset[]>(read);
 
   const savePreset = useCallback((name: string, filters: UIFilters) => {
-    const { page: _p, limit: _l, ...saveable } = filters;
+    const { page: _page, limit: _limit, ...saveable } = filters;
     const preset: FilterPreset = {
       id: `preset-${Date.now()}`,
       name: name.trim(),

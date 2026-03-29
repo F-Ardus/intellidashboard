@@ -24,7 +24,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
   const pages = buildPages(page, totalPages);
 
   return (
-    <div className={styles.pagination} data-tour="pagination">
+    <nav className={styles.pagination} data-tour="pagination" aria-label="Pagination">
       <span className={styles.info}>
         {fmt(t.pagination.showing, {
           from: from.toLocaleString(intlLocale),
@@ -67,6 +67,8 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
               key={p}
               className={`${styles.btn}${p === page ? ` ${styles.active}` : ''}`}
               onClick={() => onPageChange(p)}
+              aria-label={`Page ${p}`}
+              aria-current={p === page ? 'page' : undefined}
             >
               {p}
             </button>
@@ -82,6 +84,6 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
           ›
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

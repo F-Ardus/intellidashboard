@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DetailPanel } from './components/detail/DetailPanel/DetailPanel';
 import { PageHeader } from './components/header/PageHeader/PageHeader';
 import { AddIndicatorModal } from './components/indicators/AddIndicatorModal/AddIndicatorModal';
@@ -21,6 +21,7 @@ import { SelectionBar } from './components/toolbar/SelectionBar/SelectionBar';
 import { Toolbar } from './components/toolbar/Toolbar/Toolbar';
 import { useTour } from './hooks/useTour';
 import { TourOverlay } from './components/tour/TourOverlay';
+import { KeyboardShortcutsModal } from './components/common/KeyboardShortcutsModal/KeyboardShortcutsModal';
 import { useAutoRefresh } from './hooks/useAutoRefresh';
 import { useAvailableTags } from './hooks/useAvailableTags';
 import { useFilters } from './hooks/useFilters';
@@ -40,6 +41,7 @@ function App() {
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [view, setView] = useState<AppView>('dashboard');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
   const handleNavigate = useCallback((v: AppView) => {
     setView(v);
@@ -64,6 +66,47 @@ function App() {
   const { stats, loading: statsLoading } = useStats(refreshKey);
   const { filters, setSearch, setSeverity, setType, setSource, setTags, setPage, setLimit, reset } = useFilters();
   const { data: indicators, loading: indicatorsLoading, total, totalPages } = useIndicators(filters, refreshKey);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement).tagName.toLowerCase();
+      const isEditing = tag === 'input' || tag === 'textarea' || tag === 'select'
+        || (e.target as HTMLElement).isContentEditable;
+
+      // Escape always works — closes outermost open layer
+      if (e.key === 'Escape') {
+        if (shortcutsOpen) { setShortcutsOpen(false); return; }
+        if (statsModalOpen) { setStatsModalOpen(false); return; }
+        if (addModalOpen)   { setAddModalOpen(false);   return; }
+        if (mobileNavOpen)  { setMobileNavOpen(false);  return; }
+        if (selectedId)     { setSelectedId(null);      return; }
+        return;
+      }
+
+      if (isEditing) return;
+
+      if (e.key === '/') {
+        e.preventDefault();
+        (document.querySelector('[data-tour="search"] input') as HTMLElement | null)?.focus();
+      }
+
+      if (e.key === '?') {
+        setShortcutsOpen((v) => !v);
+      }
+
+      if (view === 'dashboard' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        const inTable = (e.target as HTMLElement).closest('[data-tour="table"]');
+        if (!inTable) {
+          const current = filters.page ?? 1;
+          if (e.key === 'ArrowLeft'  && current > 1)           setPage(current - 1);
+          if (e.key === 'ArrowRight' && current < totalPages)  setPage(current + 1);
+        }
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [shortcutsOpen, statsModalOpen, addModalOpen, mobileNavOpen, selectedId, view, filters.page, totalPages, setPage]);
   const { sort, toggleSort } = useSort();
   const sortedIndicators = useMemo(() => sortIndicators(indicators, sort), [indicators, sort]);
   const displayIndicators = useMemo(
@@ -158,7 +201,7 @@ function App() {
           />
         ) : (
           <>
-            <PageHeader onExport={handleExport} secondsLeft={secondsLeft} onAddIndicator={() => setAddModalOpen(true)} />
+            <PageHeader onExport={handleExport} secondsLeft={secondsLeft} onAddIndicator={() => setAddModalOpen(true)} onShowShortcuts={() => setShortcutsOpen(true)} />
             <StatsRow
               stats={stats}
               loading={statsLoading}
@@ -254,6 +297,9 @@ function App() {
           onPrev={tourPrev}
           onSkip={tourSkip}
         />
+      )}
+      {shortcutsOpen && (
+        <KeyboardShortcutsModal onClose={() => setShortcutsOpen(false)} />
       )}
       </>
     </LocaleContext.Provider>

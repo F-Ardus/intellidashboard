@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { SOURCES } from '../../../constants/sources';
 import { ALL_TAGS } from '../../../hooks/useAvailableTags';
 import type { Indicator, IndicatorType, Severity } from '../../../types/indicator';
 import { Button } from '../../common/Button/Button';
+import { useFocusTrap } from '../../../hooks/useFocusTrap';
 import { useT } from '../../../contexts/LocaleContext';
 import styles from './AddIndicatorModal.module.scss';
 
@@ -36,6 +37,8 @@ interface AddIndicatorModalProps {
 
 export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
   const { t } = useT();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef, true);
   const [form, setForm] = useState<FormState>({
     value: '',
     type: '',
@@ -104,8 +107,8 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
   ];
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.overlay} onClick={onClose} onKeyDown={(e) => e.key === 'Escape' && onClose()}>
+      <div ref={modalRef} className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2>{t.addIndicator.title}</h2>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>

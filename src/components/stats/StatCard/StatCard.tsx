@@ -26,7 +26,13 @@ export function StatCard({ label, value, variant, subLabel, icon, onClick }: Sta
     .join(' ');
 
   return (
-    <div className={cardClass} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}>
+    <div
+      className={cardClass}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
+    >
       <div className={styles.header}>
         <span className={styles.label}>{label}</span>
         {icon && <span className={styles.icon}>{icon}</span>}

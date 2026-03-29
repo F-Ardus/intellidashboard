@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import type { Stats } from '../../../types/stats';
+import { useFocusTrap } from '../../../hooks/useFocusTrap';
 import { useT } from '../../../contexts/LocaleContext';
 import styles from './StatsModal.module.scss';
 
@@ -82,6 +84,8 @@ interface StatsModalProps {
 
 export function StatsModal({ stats, onClose }: StatsModalProps) {
   const { t, intlLocale } = useT();
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef, true);
 
   const severityLabels = {
     total: t.statsModal.total,
@@ -100,9 +104,16 @@ export function StatsModal({ stats, onClose }: StatsModalProps) {
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={modalRef}
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="stats-modal-title"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={styles.header}>
-          <h2>{t.statsModal.title}</h2>
+          <h2 id="stats-modal-title">{t.statsModal.title}</h2>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>
         </div>
         <div className={styles.body}>

@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import type { ReactNode } from 'react';
+import { useFocusTrap } from '../../../hooks/useFocusTrap';
 import styles from './AppLayout.module.scss';
 
 interface AppLayoutProps {
@@ -19,6 +21,9 @@ function LogoMark() {
 }
 
 export function AppLayout({ sidebar, children, mobileNavOpen, onMobileNavOpen, onMobileNavClose }: AppLayoutProps) {
+  const drawerRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(drawerRef, mobileNavOpen);
+
   return (
     <div className={styles.layout}>
       {/* Desktop sidebar */}
@@ -49,7 +54,7 @@ export function AppLayout({ sidebar, children, mobileNavOpen, onMobileNavOpen, o
       {mobileNavOpen && (
         <>
           <div className={styles.drawerBackdrop} onClick={onMobileNavClose} aria-hidden="true" />
-          <div className={styles.drawerPanel} role="dialog" aria-modal="true" aria-label="Navigation">
+          <div ref={drawerRef} className={styles.drawerPanel} role="dialog" aria-modal="true" aria-label="Navigation">
             <button className={styles.drawerClose} onClick={onMobileNavClose} aria-label="Close navigation">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                 <line x1="18" y1="6" x2="6" y2="18" />
