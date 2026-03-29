@@ -1,4 +1,6 @@
 import { buildPages } from './buildPages';
+import { useT } from '../../../contexts/LocaleContext';
+import { fmt } from '../../../i18n';
 import styles from './Pagination.module.scss';
 
 const LIMIT_OPTIONS = [10, 20, 50, 100];
@@ -13,6 +15,8 @@ interface PaginationProps {
 }
 
 export function Pagination({ page, totalPages, total, limit, onPageChange, onLimitChange }: PaginationProps) {
+  const { t, intlLocale } = useT();
+
   if (totalPages <= 1 && total <= (LIMIT_OPTIONS[0] ?? 10)) return null;
 
   const from = (page - 1) * limit + 1;
@@ -22,11 +26,15 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
   return (
     <div className={styles.pagination}>
       <span className={styles.info}>
-        Showing {from.toLocaleString('en-US')}–{to.toLocaleString('en-US')} of {total.toLocaleString('en-US')} indicators
+        {fmt(t.pagination.showing, {
+          from: from.toLocaleString(intlLocale),
+          to: to.toLocaleString(intlLocale),
+          total: total.toLocaleString(intlLocale),
+        })}
       </span>
 
       <div className={styles.limitSelect}>
-        <label className={styles.limitLabel} htmlFor="rows-per-page">Rows</label>
+        <label className={styles.limitLabel} htmlFor="rows-per-page">{t.pagination.rows}</label>
         <select
           id="rows-per-page"
           className={styles.limitDropdown}
@@ -44,7 +52,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
           className={styles.btn}
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          aria-label="Previous page"
+          aria-label={t.pagination.previousPage}
         >
           ‹
         </button>
@@ -69,7 +77,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange, onLim
           className={styles.btn}
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          aria-label="Next page"
+          aria-label={t.pagination.nextPage}
         >
           ›
         </button>

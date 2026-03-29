@@ -9,6 +9,9 @@ import { Sidebar } from './components/layout/Sidebar/Sidebar';
 import type { AppView } from './components/layout/Sidebar/Sidebar';
 import { SettingsView } from './components/settings/SettingsView/SettingsView';
 import { useTheme } from './hooks/useTheme';
+import { useLocale } from './hooks/useLocale';
+import { fmt } from './i18n';
+import { LocaleContext } from './contexts/LocaleContext';
 import { Pagination } from './components/pagination/Pagination/Pagination';
 import { StatsRow } from './components/stats/StatsRow/StatsRow';
 import { IndicatorTable } from './components/table/IndicatorTable/IndicatorTable';
@@ -33,6 +36,7 @@ function App() {
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [view, setView] = useState<AppView>('dashboard');
   const { theme, setTheme } = useTheme();
+  const { locale, setLocale, translations: t, intlLocale } = useLocale();
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [localIndicators, setLocalIndicators] = useState<Indicator[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -55,8 +59,8 @@ function App() {
 
   const handleAddIndicator = useCallback((indicator: Indicator) => {
     setLocalIndicators((prev) => [indicator, ...prev]);
-    setToast('Indicator added successfully');
-  }, []);
+    setToast(t.toast.indicatorAdded);
+  }, [t]);
   const availableTags = useAvailableTags(filters);
 
   const hasActiveFilters = Boolean(
@@ -122,7 +126,8 @@ function App() {
   const showSelectionBar = allPagesSelected || checkedIndicators.size > 0;
 
   return (
-    <>
+    <LocaleContext.Provider value={{ locale, setLocale, t, fmt, intlLocale }}>
+      <>
       <AppLayout sidebar={<Sidebar activeView={view} onNavigate={setView} />}>
         {view === 'settings' ? (
           <SettingsView theme={theme} onThemeChange={setTheme} />
@@ -200,7 +205,8 @@ function App() {
       {toast !== null && (
         <Toast message={toast} onDismiss={() => setToast(null)} />
       )}
-    </>
+      </>
+    </LocaleContext.Provider>
   );
 }
 

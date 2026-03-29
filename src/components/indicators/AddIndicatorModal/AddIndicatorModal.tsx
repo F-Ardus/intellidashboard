@@ -3,21 +3,8 @@ import { SOURCES } from '../../../constants/sources';
 import { ALL_TAGS } from '../../../hooks/useAvailableTags';
 import type { Indicator, IndicatorType, Severity } from '../../../types/indicator';
 import { Button } from '../../common/Button/Button';
+import { useT } from '../../../contexts/LocaleContext';
 import styles from './AddIndicatorModal.module.scss';
-
-const TYPE_OPTIONS: { value: IndicatorType; label: string }[] = [
-  { value: 'ip',     label: 'IP Address' },
-  { value: 'domain', label: 'Domain' },
-  { value: 'hash',   label: 'File Hash' },
-  { value: 'url',    label: 'URL' },
-];
-
-const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
-  { value: 'critical', label: 'Critical' },
-  { value: 'high',     label: 'High' },
-  { value: 'medium',   label: 'Medium' },
-  { value: 'low',      label: 'Low' },
-];
 
 function colorIndex(tag: string): number {
   let sum = 0;
@@ -48,6 +35,7 @@ interface AddIndicatorModalProps {
 }
 
 export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
+  const { t } = useT();
   const [form, setForm] = useState<FormState>({
     value: '',
     type: '',
@@ -72,10 +60,10 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
 
   function validate(): boolean {
     const next: Errors = {};
-    if (!form.value.trim()) next.value = 'Value is required';
-    if (!form.type) next.type = 'Type is required';
-    if (!form.severity) next.severity = 'Severity is required';
-    if (!form.source) next.source = 'Source is required';
+    if (!form.value.trim()) next.value = t.addIndicator.valueRequired;
+    if (!form.type) next.type = t.addIndicator.typeRequired;
+    if (!form.severity) next.severity = t.addIndicator.severityRequired;
+    if (!form.source) next.source = t.addIndicator.sourceRequired;
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -101,23 +89,39 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
     onClose();
   }
 
+  const typeOptions: { value: IndicatorType; label: string }[] = [
+    { value: 'ip',     label: t.toolbar.type.ip },
+    { value: 'domain', label: t.toolbar.type.domain },
+    { value: 'hash',   label: t.toolbar.type.hash },
+    { value: 'url',    label: t.toolbar.type.url },
+  ];
+
+  const severityOptions: { value: Severity; label: string }[] = [
+    { value: 'critical', label: t.toolbar.severity.critical },
+    { value: 'high',     label: t.toolbar.severity.high },
+    { value: 'medium',   label: t.toolbar.severity.medium },
+    { value: 'low',      label: t.toolbar.severity.low },
+  ];
+
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>Add Indicator</h2>
+          <h2>{t.addIndicator.title}</h2>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>
         </div>
 
         <form className={styles.body} onSubmit={handleSubmit} noValidate>
           {/* Value */}
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="ind-value">Value <span className={styles.required}>*</span></label>
+            <label className={styles.label} htmlFor="ind-value">
+              {t.addIndicator.valueLabelText} <span className={styles.required}>*</span>
+            </label>
             <input
               id="ind-value"
               className={`${styles.input} ${errors.value ? styles.inputError : ''}`}
               type="text"
-              placeholder="e.g. 192.168.1.1, evil.com, abc123..."
+              placeholder={t.addIndicator.valuePlaceholder}
               value={form.value}
               onChange={(e) => set('value', e.target.value)}
               autoFocus
@@ -128,29 +132,33 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
           {/* Type + Severity row */}
           <div className={styles.row}>
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="ind-type">Type <span className={styles.required}>*</span></label>
+              <label className={styles.label} htmlFor="ind-type">
+                {t.addIndicator.typeLabel} <span className={styles.required}>*</span>
+              </label>
               <select
                 id="ind-type"
                 className={`${styles.select} ${errors.type ? styles.inputError : ''}`}
                 value={form.type}
                 onChange={(e) => set('type', e.target.value as IndicatorType | '')}
               >
-                <option value="">Select type…</option>
-                {TYPE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                <option value="">{t.addIndicator.selectType}</option>
+                {typeOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
               {errors.type && <span className={styles.error}>{errors.type}</span>}
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="ind-severity">Severity <span className={styles.required}>*</span></label>
+              <label className={styles.label} htmlFor="ind-severity">
+                {t.addIndicator.severityLabel} <span className={styles.required}>*</span>
+              </label>
               <select
                 id="ind-severity"
                 className={`${styles.select} ${errors.severity ? styles.inputError : ''}`}
                 value={form.severity}
                 onChange={(e) => set('severity', e.target.value as Severity | '')}
               >
-                <option value="">Select severity…</option>
-                {SEVERITY_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                <option value="">{t.addIndicator.selectSeverity}</option>
+                {severityOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
               {errors.severity && <span className={styles.error}>{errors.severity}</span>}
             </div>
@@ -158,14 +166,16 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
 
           {/* Source */}
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="ind-source">Source <span className={styles.required}>*</span></label>
+            <label className={styles.label} htmlFor="ind-source">
+              {t.addIndicator.sourceLabel} <span className={styles.required}>*</span>
+            </label>
             <select
               id="ind-source"
               className={`${styles.select} ${errors.source ? styles.inputError : ''}`}
               value={form.source}
               onChange={(e) => set('source', e.target.value)}
             >
-              <option value="">Select source…</option>
+              <option value="">{t.addIndicator.selectSource}</option>
               {SOURCES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
             {errors.source && <span className={styles.error}>{errors.source}</span>}
@@ -174,7 +184,7 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
           {/* Confidence */}
           <div className={styles.field}>
             <label className={styles.label} htmlFor="ind-confidence">
-              Confidence
+              {t.addIndicator.confidenceLabel}
               <span className={styles.confidenceValue}>{form.confidence}%</span>
             </label>
             <input
@@ -190,7 +200,9 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
 
           {/* Tags */}
           <div className={styles.field}>
-            <label className={styles.label}>Tags <span className={styles.optional}>(optional)</span></label>
+            <label className={styles.label}>
+              {t.addIndicator.tagsLabel} <span className={styles.optional}>{t.addIndicator.tagsOptional}</span>
+            </label>
             <div className={styles.tagPills}>
               {ALL_TAGS.map((tag) => {
                 const active = form.tags.includes(tag);
@@ -211,8 +223,8 @@ export function AddIndicatorModal({ onClose, onAdd }: AddIndicatorModalProps) {
           </div>
 
           <div className={styles.footer}>
-            <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
-            <Button type="submit" variant="primary" size="sm">Add Indicator</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={onClose}>{t.addIndicator.cancel}</Button>
+            <Button type="submit" variant="primary" size="sm">{t.addIndicator.submit}</Button>
           </div>
         </form>
       </div>

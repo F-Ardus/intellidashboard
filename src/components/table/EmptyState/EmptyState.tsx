@@ -1,3 +1,4 @@
+import { useT } from '../../../contexts/LocaleContext';
 import styles from './EmptyState.module.scss';
 
 const COLUMN_COUNT = 8;
@@ -7,6 +8,7 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ hasFilters }: EmptyStateProps) {
+  const { t } = useT();
   return (
     <tr>
       <td className={styles.cell} colSpan={COLUMN_COUNT}>
@@ -15,11 +17,9 @@ export function EmptyState({ hasFilters }: EmptyStateProps) {
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <p className={styles.title}>No indicators found</p>
+          <p className={styles.title}>{t.table.noResults}</p>
           <p className={styles.hint}>
-            {hasFilters
-              ? 'Try adjusting your filters or search query.'
-              : 'No threat indicators are available yet.'}
+            {hasFilters ? t.table.noResultsFiltered : t.table.noResultsEmpty}
           </p>
         </div>
       </td>

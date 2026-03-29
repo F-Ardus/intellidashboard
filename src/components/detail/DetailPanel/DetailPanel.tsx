@@ -3,6 +3,7 @@ import { SeverityBadge } from '../../table/SeverityBadge/SeverityBadge';
 import { TagPill } from '../../table/TagPill/TagPill';
 import { TypeIcon } from '../../table/TypeIcon/TypeIcon';
 import { useIndicatorDetail } from '../../../hooks/useIndicatorDetail';
+import { useT } from '../../../contexts/LocaleContext';
 import { formatAbsoluteTime, formatRelativeTime } from '../../../utils/time';
 import styles from './DetailPanel.module.scss';
 
@@ -20,12 +21,13 @@ interface DetailPanelProps {
 
 export function DetailPanel({ id, onClose }: DetailPanelProps) {
   const { indicator, loading } = useIndicatorDetail(id);
+  const { t } = useT();
 
   if (loading && !indicator) {
     return (
       <div className={styles.panel}>
         <div className={styles.header}>
-          <span className={styles.title}>Indicator Details</span>
+          <span className={styles.title}>{t.detail.title}</span>
           <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
       </div>
@@ -37,18 +39,18 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
   return (
     <div className={styles.panel}>
       <div className={styles.header}>
-        <span className={styles.title}>Indicator Details</span>
+        <span className={styles.title}>{t.detail.title}</span>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close panel">✕</button>
       </div>
 
       <div className={styles.body}>
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>Value</div>
+          <div className={styles.sectionLabel}>{t.detail.value}</div>
           <div className={styles.value}>{indicator.value}</div>
         </div>
 
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>Classification</div>
+          <div className={styles.sectionLabel}>{t.detail.classification}</div>
           <div className={styles.classification}>
             <SeverityBadge severity={indicator.severity} />
             <span className={styles.typeLabel}>
@@ -59,7 +61,7 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
         </div>
 
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>Confidence Score</div>
+          <div className={styles.sectionLabel}>{t.detail.confidenceScore}</div>
           <div className={styles.confidenceWrapper}>
             <div className={styles.confidenceTrack}>
               <div
@@ -80,7 +82,7 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
         </div>
 
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>Tags</div>
+          <div className={styles.sectionLabel}>{t.detail.tags}</div>
           <div className={styles.tags}>
             {indicator.tags.map((tag) => (
               <TagPill key={tag} tag={tag} />
@@ -89,21 +91,21 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
         </div>
 
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>Timeline</div>
+          <div className={styles.sectionLabel}>{t.detail.timeline}</div>
           <div className={styles.row}>
-            <span className={styles.rowLabel}>First Seen</span>
+            <span className={styles.rowLabel}>{t.detail.firstSeen}</span>
             <span className={styles.rowValue}>{formatAbsoluteTime(indicator.firstSeen)}</span>
           </div>
           <div className={styles.row}>
-            <span className={styles.rowLabel}>Last Seen</span>
+            <span className={styles.rowLabel}>{t.detail.lastSeen}</span>
             <span className={styles.rowValue}>{formatRelativeTime(indicator.lastSeen)}</span>
           </div>
         </div>
 
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>Source</div>
+          <div className={styles.sectionLabel}>{t.detail.source}</div>
           <div className={styles.row}>
-            <span className={styles.rowLabel}>Provider</span>
+            <span className={styles.rowLabel}>{t.detail.provider}</span>
             <span className={styles.rowValue}>{indicator.source}</span>
           </div>
         </div>
@@ -115,16 +117,16 @@ export function DetailPanel({ id, onClose }: DetailPanelProps) {
             size="sm"
             onClick={() => window.open(`https://www.virustotal.com/gui/search/${encodeURIComponent(indicator.value)}`, '_blank', 'noopener,noreferrer')}
           >
-            Investigate
+            {t.detail.investigate}
           </Button>
           <Button
             className={styles.actionBtn}
             variant="danger"
             size="sm"
             disabled
-            title="Requires SIEM/firewall integration"
+            title={t.detail.blockTooltip}
           >
-            Block
+            {t.detail.block}
           </Button>
         </div>
       </div>

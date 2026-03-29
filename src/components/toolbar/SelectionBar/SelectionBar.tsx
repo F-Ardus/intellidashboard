@@ -1,4 +1,6 @@
 import { Button } from '../../common/Button/Button';
+import { useT } from '../../../contexts/LocaleContext';
+import { fmt } from '../../../i18n';
 import styles from './SelectionBar.module.scss';
 
 interface SelectionBarProps {
@@ -20,22 +22,23 @@ export function SelectionBar({
   onClear,
   onSelectAllPages,
 }: SelectionBarProps) {
+  const { t, intlLocale } = useT();
   return (
     <div className={styles.bar}>
       <div className={styles.left}>
         <span className={styles.info}>
           {allPagesSelected
-            ? `All ${total.toLocaleString('en-US')} indicators selected`
-            : `${count} indicator${count !== 1 ? 's' : ''} selected`}
+            ? fmt(t.selection.allSelected, { total: total.toLocaleString(intlLocale) })
+            : fmt(count !== 1 ? t.selection.countSelectedPlural : t.selection.countSelected, { count: count.toLocaleString(intlLocale) })}
         </span>
 
         {allOnPageSelected && !allPagesSelected && count < total && (
           <>
             <span className={styles.separator}>·</span>
             <span className={styles.pageNote}>
-              You are only selecting indicators on this page.{' '}
+              {t.selection.pageOnlyNote}{' '}
               <button className={styles.selectAllBtn} onClick={onSelectAllPages}>
-                Select all {total.toLocaleString('en-US')} instead?
+                {fmt(t.selection.selectAllInstead, { total: total.toLocaleString(intlLocale) })}
               </button>
             </span>
           </>
@@ -45,7 +48,7 @@ export function SelectionBar({
           <>
             <span className={styles.separator}>·</span>
             <button className={styles.selectAllBtn} onClick={onClear}>
-              Clear full selection
+              {t.selection.clearFullSelection}
             </button>
           </>
         )}
@@ -53,9 +56,9 @@ export function SelectionBar({
 
       <div className={styles.actions}>
         {!allPagesSelected && (
-          <Button variant="ghost" size="sm" onClick={onClear}>Clear selection</Button>
+          <Button variant="ghost" size="sm" onClick={onClear}>{t.selection.clearSelection}</Button>
         )}
-        <Button variant="primary" size="sm" onClick={onExport}>Export CSV</Button>
+        <Button variant="primary" size="sm" onClick={onExport}>{t.selection.exportCsv}</Button>
       </div>
     </div>
   );

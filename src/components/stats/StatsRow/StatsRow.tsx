@@ -1,6 +1,7 @@
 import type { Severity } from '../../../types/indicator';
 import type { Stats } from '../../../types/stats';
 import { StatCard } from '../StatCard/StatCard';
+import { useT } from '../../../contexts/LocaleContext';
 import styles from './StatsRow.module.scss';
 
 interface StatsRowProps {
@@ -19,6 +20,7 @@ function ShieldIcon() {
 }
 
 export function StatsRow({ stats, loading, onViewStats, onFilterBySeverity }: StatsRowProps) {
+  const { t } = useT();
   const val = (n: number | undefined) =>
     loading || stats === null ? null : (n ?? 0);
 
@@ -27,39 +29,39 @@ export function StatsRow({ stats, loading, onViewStats, onFilterBySeverity }: St
   return (
     <div className={styles.row}>
       <StatCard
-        label="Total Indicators"
+        label={t.stats.total}
         value={val(stats?.total)}
         variant="total"
-        subLabel="↑ 12% from last week"
+        subLabel={t.stats.totalSub}
         icon={<ShieldIcon />}
         onClick={ready && onViewStats ? onViewStats : undefined}
       />
       <StatCard
-        label="Critical"
+        label={t.stats.critical}
         value={val(stats?.critical)}
         variant="critical"
-        subLabel="Requires immediate action"
+        subLabel={t.stats.criticalSub}
         onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('critical') : undefined}
       />
       <StatCard
-        label="High"
+        label={t.stats.high}
         value={val(stats?.high)}
         variant="high"
-        subLabel="Active monitoring"
+        subLabel={t.stats.highSub}
         onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('high') : undefined}
       />
       <StatCard
-        label="Medium"
+        label={t.stats.medium}
         value={val(stats?.medium)}
         variant="medium"
-        subLabel="Under review"
+        subLabel={t.stats.mediumSub}
         onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('medium') : undefined}
       />
       <StatCard
-        label="Low"
+        label={t.stats.low}
         value={val(stats?.low)}
         variant="low"
-        subLabel="Informational"
+        subLabel={t.stats.lowSub}
         onClick={ready && onFilterBySeverity ? () => onFilterBySeverity('low') : undefined}
       />
     </div>

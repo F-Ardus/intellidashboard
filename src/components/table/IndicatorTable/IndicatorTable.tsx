@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { SortField, SortState } from '../../../hooks/useSort';
 import type { Indicator } from '../../../types/indicator';
+import { useT } from '../../../contexts/LocaleContext';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { IndicatorRow } from '../IndicatorRow/IndicatorRow';
 import { SkeletonRow } from '../SkeletonRow/SkeletonRow';
@@ -61,6 +62,7 @@ export function IndicatorTable({
   sort,
   onSort,
 }: IndicatorTableProps) {
+  const { t } = useT();
   const allChecked = indicators.length > 0 && indicators.every((i) => checkedIds.has(i.id));
   const someChecked = !allChecked && indicators.some((i) => checkedIds.has(i.id));
   const headerCheckRef = useRef<HTMLInputElement>(null);
@@ -85,13 +87,13 @@ export function IndicatorTable({
                 aria-label="Select all"
               />
             </th>
-            <SortableTh field="value" sort={sort} onSort={onSort} className={styles.thIndicator}>Indicator</SortableTh>
-            <SortableTh field="type" sort={sort} onSort={onSort}>Type</SortableTh>
-            <SortableTh field="severity" sort={sort} onSort={onSort}>Severity</SortableTh>
-            <SortableTh field="source" sort={sort} onSort={onSort}>Source</SortableTh>
-            <SortableTh field="confidence" sort={sort} onSort={onSort}>Confidence</SortableTh>
-            <SortableTh field="lastSeen" sort={sort} onSort={onSort}>Last Seen</SortableTh>
-            <th className={styles.th}>Tags</th>
+            <SortableTh field="value" sort={sort} onSort={onSort} className={styles.thIndicator}>{t.table.indicator}</SortableTh>
+            <SortableTh field="type" sort={sort} onSort={onSort}>{t.table.type}</SortableTh>
+            <SortableTh field="severity" sort={sort} onSort={onSort}>{t.table.severity}</SortableTh>
+            <SortableTh field="source" sort={sort} onSort={onSort}>{t.table.source}</SortableTh>
+            <SortableTh field="confidence" sort={sort} onSort={onSort}>{t.table.confidence}</SortableTh>
+            <SortableTh field="lastSeen" sort={sort} onSort={onSort}>{t.table.lastSeen}</SortableTh>
+            <th className={styles.th}>{t.table.tags}</th>
           </tr>
         </thead>
         <tbody>

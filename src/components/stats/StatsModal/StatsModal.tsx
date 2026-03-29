@@ -1,19 +1,9 @@
 import type { Stats } from '../../../types/stats';
+import { useT } from '../../../contexts/LocaleContext';
 import styles from './StatsModal.module.scss';
 
-const SEVERITY_SEGMENTS = [
-  { key: 'critical', label: 'Critical', color: 'var(--severity-critical)' },
-  { key: 'high',     label: 'High',     color: 'var(--severity-high)' },
-  { key: 'medium',   label: 'Medium',   color: 'var(--severity-medium)' },
-  { key: 'low',      label: 'Low',      color: 'var(--severity-low)' },
-] as const;
-
-const TYPE_ROWS = [
-  { key: 'ip',     label: 'IP Address' },
-  { key: 'domain', label: 'Domain' },
-  { key: 'hash',   label: 'File Hash' },
-  { key: 'url',    label: 'URL' },
-] as const;
+const SEVERITY_SEGMENT_KEYS = ['critical', 'high', 'medium', 'low'] as const;
+const TYPE_ROW_KEYS = ['ip', 'domain', 'hash', 'url'] as const;
 
 function pct(value: number, total: number) {
   return total > 0 ? `${Math.round((value / total) * 100)}%` : '—';
@@ -21,9 +11,18 @@ function pct(value: number, total: number) {
 
 interface DonutChartProps {
   stats: Stats;
+  labels: Record<string, string>;
+  intlLocale: string;
 }
 
-function DonutChart({ stats }: DonutChartProps) {
+const SEVERITY_COLORS: Record<string, string> = {
+  critical: 'var(--severity-critical)',
+  high:     'var(--severity-high)',
+  medium:   'var(--severity-medium)',
+  low:      'var(--severity-low)',
+};
+
+function DonutChart({ stats, labels, intlLocale }: DonutChartProps) {
   const r = 50;
   const cx = 60;
   const cy = 60;
@@ -36,20 +35,20 @@ function DonutChart({ stats }: DonutChartProps) {
       <div className={styles.donutChart}>
         <svg viewBox="0 0 120 120">
           <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--bg-elevated)" strokeWidth="16" />
-          {SEVERITY_SEGMENTS.map((seg) => {
-            const value = stats[seg.key];
+          {SEVERITY_SEGMENT_KEYS.map((key) => {
+            const value = stats[key];
             if (value === 0) return null;
             const dash = (value / stats.total) * C;
             const segOffset = offset;
             offset += dash;
             return (
               <circle
-                key={seg.key}
+                key={key}
                 cx={cx}
                 cy={cy}
                 r={r}
                 fill="none"
-                stroke={seg.color}
+                stroke={SEVERITY_COLORS[key]}
                 strokeWidth="16"
                 strokeDasharray={`${dash} ${C - dash}`}
                 strokeDashoffset={-segOffset}
@@ -58,17 +57,17 @@ function DonutChart({ stats }: DonutChartProps) {
           })}
         </svg>
         <div className={styles.donutCenter}>
-          <span className={styles.donutValue}>{stats.total.toLocaleString('en-US')}</span>
-          <span className={styles.donutLabel}>Total</span>
+          <span className={styles.donutValue}>{stats.total.toLocaleString(intlLocale)}</span>
+          <span className={styles.donutLabel}>{labels.total}</span>
         </div>
       </div>
       <div className={styles.legend}>
-        {SEVERITY_SEGMENTS.map((seg) => (
-          <div key={seg.key} className={styles.legendItem}>
-            <span className={styles.legendDot} style={{ background: seg.color }} />
-            <span className={styles.legendName}>{seg.label}</span>
-            <span className={styles.legendCount}>{stats[seg.key].toLocaleString('en-US')}</span>
-            <span className={styles.legendPct}>{pct(stats[seg.key], stats.total)}</span>
+        {SEVERITY_SEGMENT_KEYS.map((key) => (
+          <div key={key} className={styles.legendItem}>
+            <span className={styles.legendDot} style={{ background: SEVERITY_COLORS[key] }} />
+            <span className={styles.legendName}>{labels[key]}</span>
+            <span className={styles.legendCount}>{stats[key].toLocaleString(intlLocale)}</span>
+            <span className={styles.legendPct}>{pct(stats[key], stats.total)}</span>
           </div>
         ))}
       </div>
@@ -82,34 +81,51 @@ interface StatsModalProps {
 }
 
 export function StatsModal({ stats, onClose }: StatsModalProps) {
+  const { t, intlLocale } = useT();
+
+  const severityLabels = {
+    total: t.statsModal.total,
+    critical: t.statsModal.critical,
+    high: t.statsModal.high,
+    medium: t.statsModal.medium,
+    low: t.statsModal.low,
+  };
+
+  const typeLabels: Record<string, string> = {
+    ip: t.statsModal.ip,
+    domain: t.statsModal.domain,
+    hash: t.statsModal.hash,
+    url: t.statsModal.url,
+  };
+
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>Threat Intelligence Overview</h2>
+          <h2>{t.statsModal.title}</h2>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>
         </div>
         <div className={styles.body}>
           <div className={styles.section}>
-            <h4>Severity Distribution</h4>
-            <DonutChart stats={stats} />
+            <h4>{t.statsModal.severityDistribution}</h4>
+            <DonutChart stats={stats} labels={severityLabels} intlLocale={intlLocale} />
           </div>
           <div className={styles.section}>
-            <h4>Indicators by Type</h4>
+            <h4>{t.statsModal.byType}</h4>
             <table className={styles.kpiTable}>
               <thead>
                 <tr>
                   <th>Type</th>
-                  <th>Count</th>
-                  <th>% of Total</th>
+                  <th>{t.statsModal.typeCount}</th>
+                  <th>{t.statsModal.typePct}</th>
                 </tr>
               </thead>
               <tbody>
-                {TYPE_ROWS.map((row) => (
-                  <tr key={row.key}>
-                    <td>{row.label}</td>
-                    <td>{stats.byType[row.key].toLocaleString('en-US')}</td>
-                    <td>{pct(stats.byType[row.key], stats.total)}</td>
+                {TYPE_ROW_KEYS.map((key) => (
+                  <tr key={key}>
+                    <td>{typeLabels[key]}</td>
+                    <td>{stats.byType[key].toLocaleString(intlLocale)}</td>
+                    <td>{pct(stats.byType[key], stats.total)}</td>
                   </tr>
                 ))}
               </tbody>

@@ -1,3 +1,4 @@
+import { useT } from '../../../contexts/LocaleContext';
 import styles from './Sidebar.module.scss';
 
 export type AppView = 'dashboard' | 'settings';
@@ -5,26 +6,6 @@ export type AppView = 'dashboard' | 'settings';
 interface SidebarProps {
   activeView: AppView;
   onNavigate: (view: AppView) => void;
-}
-
-interface NavItem {
-  label: string;
-  icon: React.ReactNode;
-  badge?: string;
-}
-
-interface NavSection {
-  label?: string;
-  items: NavItem[];
-}
-
-function LogoIcon() {
-  return (
-    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M14 2L2 26h24L14 2z" stroke="#fff" strokeWidth="2" fill="none" />
-      <path d="M14 10l-5 10h10l-5-10z" style={{ fill: 'var(--augur-blue)' }} opacity="0.5" />
-    </svg>
-  );
 }
 
 function NavIcon({ children }: { children: React.ReactNode }) {
@@ -39,6 +20,15 @@ function NavIcon({ children }: { children: React.ReactNode }) {
       strokeLinejoin="round"
     >
       {children}
+    </svg>
+  );
+}
+
+function LogoIcon() {
+  return (
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 2L2 26h24L14 2z" stroke="#fff" strokeWidth="2" fill="none" />
+      <path d="M14 10l-5 10h10l-5-10z" style={{ fill: 'var(--augur-blue)' }} opacity="0.5" />
     </svg>
   );
 }
@@ -79,36 +69,46 @@ function SettingsIcon() {
   );
 }
 
-const NAV_SECTIONS: NavSection[] = [
-  {
-    items: [
-      { label: 'Dashboard', icon: <GridIcon />, badge: '3' },
-      { label: 'Augur Events', icon: <LayersIcon /> },
-      { label: 'Investigate', icon: <SearchIcon /> },
-    ],
-  },
-  {
-    label: 'Intelligence',
-    items: [
-      { label: 'Threat Indicators', icon: <ShieldIcon /> },
-      { label: 'Campaigns', icon: <GlobeIcon /> },
-      { label: 'Actors', icon: <UsersIcon /> },
-    ],
-  },
-  {
-    label: 'Reports',
-    items: [
-      { label: 'Executive Reports', icon: <FileTextIcon /> },
-      { label: 'Analytics', icon: <BarChartIcon /> },
-    ],
-  },
-  {
-    label: 'Settings',
-    items: [{ label: 'Integrations', icon: <MenuIcon /> }],
-  },
-];
-
 export function Sidebar({ activeView, onNavigate }: SidebarProps) {
+  const { t } = useT();
+
+  interface NavItem {
+    key: string;
+    label: string;
+    icon: React.ReactNode;
+    badge?: string;
+    onClick?: () => void;
+  }
+
+  const NAV_SECTIONS: Array<{ label?: string; items: NavItem[] }> = [
+    {
+      items: [
+        { key: 'dashboard', label: t.nav.dashboard, icon: <GridIcon />, badge: '3', onClick: () => onNavigate('dashboard') },
+        { key: 'augurEvents', label: t.nav.augurEvents, icon: <LayersIcon /> },
+        { key: 'investigate', label: t.nav.investigate, icon: <SearchIcon /> },
+      ],
+    },
+    {
+      label: t.nav.intelligence,
+      items: [
+        { key: 'threatIndicators', label: t.nav.threatIndicators, icon: <ShieldIcon /> },
+        { key: 'campaigns', label: t.nav.campaigns, icon: <GlobeIcon /> },
+        { key: 'actors', label: t.nav.actors, icon: <UsersIcon /> },
+      ],
+    },
+    {
+      label: t.nav.reports,
+      items: [
+        { key: 'executiveReports', label: t.nav.executiveReports, icon: <FileTextIcon /> },
+        { key: 'analytics', label: t.nav.analytics, icon: <BarChartIcon /> },
+      ],
+    },
+    {
+      label: t.nav.settings,
+      items: [{ key: 'integrations', label: t.nav.integrations, icon: <MenuIcon /> }],
+    },
+  ];
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logo}>
@@ -123,12 +123,12 @@ export function Sidebar({ activeView, onNavigate }: SidebarProps) {
               <div className={styles.sectionLabel}>{section.label}</div>
             )}
             {section.items.map((item) => {
-              const isActive = item.label === 'Dashboard' && activeView === 'dashboard';
+              const isActive = item.key === 'dashboard' && activeView === 'dashboard';
               return (
                 <button
-                  key={item.label}
+                  key={item.key}
                   className={`${styles.navItem}${isActive ? ` ${styles.active}` : ''}`}
-                  onClick={item.label === 'Dashboard' ? () => onNavigate('dashboard') : undefined}
+                  onClick={item.onClick}
                 >
                   {item.icon}
                   {item.label}
@@ -148,7 +148,7 @@ export function Sidebar({ activeView, onNavigate }: SidebarProps) {
           onClick={() => onNavigate('settings')}
         >
           <SettingsIcon />
-          Settings
+          {t.nav.settings}
         </button>
       </div>
     </aside>

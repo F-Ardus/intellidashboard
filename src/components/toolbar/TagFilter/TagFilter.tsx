@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useT } from '../../../contexts/LocaleContext';
 import styles from './TagFilter.module.scss';
 
 function colorIndex(tag: string): number {
@@ -20,6 +21,7 @@ interface TagFilterProps {
 }
 
 export function TagFilter({ selected, availableTags, onChange }: TagFilterProps) {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +68,7 @@ export function TagFilter({ selected, availableTags, onChange }: TagFilterProps)
             ))}
           </span>
         ) : (
-          <span className={styles.placeholder}>Tags</span>
+          <span className={styles.placeholder}>{t.toolbar.tagsPlaceholder}</span>
         )}
         <span className={styles.caret}>▾</span>
       </button>
@@ -75,7 +77,7 @@ export function TagFilter({ selected, availableTags, onChange }: TagFilterProps)
         <div className={styles.dropdown}>
           <div className={styles.dropdownPills}>
             {availableTags.length === 0 && (
-              <span className={styles.empty}>No more tags match the current selection</span>
+              <span className={styles.empty}>{t.toolbar.noMoreTags}</span>
             )}
             {availableTags.map((tag) => {
               const active = selected.includes(tag);

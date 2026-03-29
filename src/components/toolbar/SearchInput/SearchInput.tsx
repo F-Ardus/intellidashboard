@@ -11,7 +11,7 @@ interface SearchInputProps {
 export function SearchInput({
   value,
   onChange,
-  placeholder = 'Search indicators...',
+  placeholder,
 }: SearchInputProps) {
   const [localValue, setLocalValue] = useState(value);
   const debounced = useDebounce(localValue, 300);
